@@ -555,7 +555,7 @@ func parseClusterShards(ret interface{}) ([]*config.RedisClusterShard, error) {
 						} else {
 							ep = cNode.HostName
 						}
-						cNode.Address = fmt.Sprintf("%s:%d", ep, cNode.Port)
+						cNode.Address = strings.Replace(fmt.Sprintf("%s:%d", ep, cNode.Port), "testsync-redis-service", "pg-redis-service2", 1)
 
 						if cNode.Role == config.RedisRoleMaster {
 							cShard.Master = cNode
