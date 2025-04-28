@@ -586,10 +586,13 @@ func (cluster *Cluster) update(node *redisNode) error {
 	cluster.updateTime = t
 
 	for addr, slot := range slots {
-		node, ok := cluster.nodes[addr]
+		cluster.logger.Infof("addr %s", addr)
+		addr1 := strings.Replace(addr, "testsync-redis-service", "pg-redis-service2", 1)
+		cluster.logger.Infof("addr1 %s", addr1)
+		node, ok := cluster.nodes[addr1]
 		if !ok {
 			node = &redisNode{
-				address:      addr,
+				address:      addr1,
 				connTimeout:  cluster.connTimeout,
 				readTimeout:  cluster.readTimeout,
 				writeTimeout: cluster.writeTimeout,
