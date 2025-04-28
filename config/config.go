@@ -489,22 +489,24 @@ func GetAddressesFromRedisConfigSlice(rcfg []RedisConfig) []string {
 }
 
 type RedisConfig struct {
-	Addresses      SliceString
-	shards         []*RedisClusterShard
-	UserName       string    `yaml:"userName"`
-	Password       string    `yaml:"password"`
-	TlsEnable      bool      `yaml:"tlsEnable"`
-	Type           RedisType // for new redis client
-	Otype          RedisType // original type
-	Version        string
-	slotLeft       int // @TODO remove it
-	slotRight      int
-	slotsMap       map[string]*RedisSlots
-	slots          RedisSlots
-	ClusterOptions *RedisClusterOptions `yaml:"clusterOptions"`
-	isMigrating    bool
-	KeepAlive      int           `yaml:"keepAlive"` // Maximum keep alive connecion in each node
-	AliveTime      time.Duration `yaml:"aliveTime"` // Keep alive timeout
+	Addresses       SliceString
+	shards          []*RedisClusterShard
+	UserName        string    `yaml:"userName"`
+	Password        string    `yaml:"password"`
+	TlsEnable       bool      `yaml:"tlsEnable"`
+	Type            RedisType // for new redis client
+	Otype           RedisType // original type
+	Version         string
+	InternalService *string
+	ExternalService *string
+	slotLeft        int // @TODO remove it
+	slotRight       int
+	slotsMap        map[string]*RedisSlots
+	slots           RedisSlots
+	ClusterOptions  *RedisClusterOptions `yaml:"clusterOptions"`
+	isMigrating     bool
+	KeepAlive       int           `yaml:"keepAlive"` // Maximum keep alive connecion in each node
+	AliveTime       time.Duration `yaml:"aliveTime"` // Keep alive timeout
 }
 
 func (rc *RedisConfig) Clone() *RedisConfig {

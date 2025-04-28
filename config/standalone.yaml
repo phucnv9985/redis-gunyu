@@ -26,6 +26,8 @@ output:
   redis:
     addresses: [127.0.0.1:6479]
     type: standalone
+    internalService: ""
+    externalService: ""
 log:
   level: info
   handler:

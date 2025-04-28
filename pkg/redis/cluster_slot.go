@@ -22,6 +22,7 @@ func GetSlotDistribution(cli client.Redis) ([]SlotOwner, error) {
 
 func parseSlotDistribution(content interface{}) ([]SlotOwner, error) {
 
+	outputRedis := config.GetSyncerConfig().Output.Redis
 	shards, ok := content.([]interface{})
 	if !ok {
 		return nil, errors.Errorf("invalid result : %v", content)
@@ -59,7 +60,12 @@ func parseSlotDistribution(content interface{}) ([]SlotOwner, error) {
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			combine := strings.Replace(fmt.Sprintf("%s:%d", ip, port), "testsync-redis-service", "pg-redis-service2", 1)
+			var combine string
+			if outputRedis.InternalService != nil && outputRedis.ExternalService != nil {
+				combine = strings.Replace(fmt.Sprintf("%s:%d", ip, port), *outputRedis.InternalService, *outputRedis.ExternalService, 1)
+			} else {
+				combine = fmt.Sprintf("%s:%d", ip, port)
+			}
 
 			if i == 2 {
 				master = combine

@@ -584,10 +584,15 @@ func (cluster *Cluster) update(node *redisNode) error {
 
 	t := time.Now()
 	cluster.updateTime = t
-
+	outputRedis := config.GetSyncerConfig().Output.Redis
 	for addr, slot := range slots {
 		cluster.logger.Infof("addr %s", addr)
-		addr1 := strings.Replace(addr, "testsync-redis-service", "pg-redis-service2", 1)
+		var addr1 string
+		if outputRedis.InternalService != nil && outputRedis.ExternalService != nil {
+			addr1 = strings.Replace(addr, *outputRedis.InternalService, *outputRedis.ExternalService, 1)
+		} else {
+			addr1 = addr
+		}
 		cluster.logger.Infof("addr1 %s", addr1)
 		node, ok := cluster.nodes[addr1]
 		if !ok {

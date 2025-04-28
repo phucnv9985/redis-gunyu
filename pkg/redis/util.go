@@ -471,7 +471,7 @@ func GetAllClusterShard7(cli client.Redis) ([]*config.RedisClusterShard, error) 
 
 func parseClusterShards(ret interface{}) ([]*config.RedisClusterShard, error) {
 	cShards := []*config.RedisClusterShard{}
-
+	outputRedis := config.GetSyncerConfig().Output.Redis
 	shards, ok := ret.([]interface{})
 	if !ok {
 		return nil, errors.Errorf("invalid result : %v", ret)
@@ -555,8 +555,12 @@ func parseClusterShards(ret interface{}) ([]*config.RedisClusterShard, error) {
 						} else {
 							ep = cNode.HostName
 						}
-						cNode.Address = strings.Replace(fmt.Sprintf("%s:%d", ep, cNode.Port), "testsync-redis-service", "pg-redis-service2", 1)
+						if outputRedis.InternalService != nil && outputRedis.ExternalService != nil {
+							cNode.Address = strings.Replace(fmt.Sprintf("%s:%d", ep, cNode.Port), *outputRedis.InternalService, *outputRedis.ExternalService, 1)
 
+						} else {
+							cNode.Address = fmt.Sprintf("%s:%d", ep, cNode.Port)
+						}
 						if cNode.Role == config.RedisRoleMaster {
 							cShard.Master = cNode
 						} else {

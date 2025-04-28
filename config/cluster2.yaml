@@ -20,6 +20,8 @@ output:
   redis:
     addresses: [127.0.0.1:16400,127.0.0.1:16401]
     type: cluster
+    internalService: ""
+    externalService: ""
   replay:
     resumeFromBreakPoint: true
     keyExists: replace
