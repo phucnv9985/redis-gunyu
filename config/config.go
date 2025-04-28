@@ -497,9 +497,9 @@ type RedisConfig struct {
 	Type            RedisType // for new redis client
 	Otype           RedisType // original type
 	Version         string
-	InternalService *string
-	ExternalService *string
-	slotLeft        int // @TODO remove it
+	InternalService *string `yaml:"internalService"`
+	ExternalService *string `yaml:"externalService"`
+	slotLeft        int     // @TODO remove it
 	slotRight       int
 	slotsMap        map[string]*RedisSlots
 	slots           RedisSlots
