@@ -3,6 +3,7 @@ package redis
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/mgtv-tech/redis-GunYu/config"
 	"github.com/mgtv-tech/redis-GunYu/pkg/errors"
@@ -58,7 +59,8 @@ func parseSlotDistribution(content interface{}) ([]SlotOwner, error) {
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
-			combine := fmt.Sprintf("%s:%d", ip, port)
+			combine := strings.Replace(fmt.Sprintf("%s:%d", ip, port), "testsync-redis-service", "pg-redis-service2", 1)
+
 			if i == 2 {
 				master = combine
 			} else {
@@ -125,7 +127,7 @@ func GetClusterSlotDistribution(cli client.Redis) (map[string]*config.RedisSlots
 			if err != nil {
 				return nil, nil, errors.WithStack(err)
 			}
-			ipPort := fmt.Sprintf("%s:%d", ip, port)
+			ipPort := strings.Replace(fmt.Sprintf("%s:%d", ip, port), "testsync-redis-service", "pg-redis-service2", 1)
 			slots, ok := slotMap[ipPort]
 			if !ok {
 				slotMap[ipPort] = &config.RedisSlots{
