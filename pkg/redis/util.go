@@ -548,10 +548,10 @@ func parseClusterShards(ret interface{}) ([]*config.RedisClusterShard, error) {
 							}
 						}
 						var ep string
-						if cNode.Ip != "" && cNode.Ip != "?" {
-							ep = cNode.Ip
-						} else if cNode.Endpoint != "" && cNode.Endpoint != "?" {
+						if cNode.Endpoint != "" && cNode.Endpoint != "?" {
 							ep = cNode.Endpoint
+						} else if cNode.Ip != "" && cNode.Ip != "?" {
+							ep = cNode.Ip
 						} else {
 							ep = cNode.HostName
 						}
