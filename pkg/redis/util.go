@@ -466,12 +466,16 @@ func GetAllClusterShard7(cli client.Redis) ([]*config.RedisClusterShard, error) 
 		return nil, err
 	}
 
-	return parseClusterShards(ret)
+	return parseClusterShards(ret, cli.GetExternalService(), cli.GetInternalService())
 }
 
-func parseClusterShards(ret interface{}) ([]*config.RedisClusterShard, error) {
+func parseClusterShards(ret interface{}, externalService *string, internalService *string) ([]*config.RedisClusterShard, error) {
 	cShards := []*config.RedisClusterShard{}
-	outputRedis := config.GetSyncerConfig().Output.Redis
+	if externalService != nil {
+		fmt.Printf("externalService %s \n", *externalService)
+	} else {
+		fmt.Printf("externalService is nil\n")
+	}
 	shards, ok := ret.([]interface{})
 	if !ok {
 		return nil, errors.Errorf("invalid result : %v", ret)
@@ -555,8 +559,8 @@ func parseClusterShards(ret interface{}) ([]*config.RedisClusterShard, error) {
 						} else {
 							ep = cNode.HostName
 						}
-						if outputRedis.InternalService != nil && outputRedis.ExternalService != nil {
-							cNode.Address = strings.Replace(fmt.Sprintf("%s:%d", ep, cNode.Port), *outputRedis.InternalService, *outputRedis.ExternalService, 1)
+						if internalService != nil && externalService != nil {
+							cNode.Address = strings.Replace(fmt.Sprintf("%s:%d", ep, cNode.Port), *internalService, *externalService, 1)
 
 						} else {
 							cNode.Address = fmt.Sprintf("%s:%d", ep, cNode.Port)

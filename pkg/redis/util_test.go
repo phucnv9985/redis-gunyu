@@ -167,7 +167,7 @@ func (uts *utilTestSuite) TestGetAllClusterShard() {
 		reply = append(reply, redisClusterShardToReply(ss))
 	}
 
-	rshards, err := parseClusterShards(reply)
+	rshards, err := parseClusterShards(reply, nil, nil)
 	uts.Nil(err)
 	uts.Len(rshards, len(reply))
 	for i, exp := range shards {
