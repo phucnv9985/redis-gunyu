@@ -29,12 +29,13 @@ type reply struct {
 
 func NewRedisCluster(cfg config.RedisConfig) (Redis, error) {
 	options := &cluster.Options{
-		StartNodes:  cfg.Addresses,
-		Password:    cfg.Password,
-		KeepAlive:   cfg.KeepAlive,
-		AliveTime:   cfg.AliveTime,
-		ConnTimeout: 5 * time.Second,
-
+		StartNodes:      cfg.Addresses,
+		Password:        cfg.Password,
+		KeepAlive:       cfg.KeepAlive,
+		AliveTime:       cfg.AliveTime,
+		ConnTimeout:     5 * time.Second,
+		ExternalService: cfg.ExternalService,
+		InternalService: cfg.InternalService,
 		//ConnTimeout: ,
 		//ReadTimeout: ,
 		//WriteTimeout: ,
@@ -62,6 +63,14 @@ func (cc *ClusterRedis) Close() error {
 
 func (cc *ClusterRedis) Addresses() []string {
 	return cc.cfg.Addresses
+}
+
+func (cc *ClusterRedis) GetExternalService() *string {
+	return cc.cfg.ExternalService
+}
+
+func (cc *ClusterRedis) GetInternalService() *string {
+	return cc.cfg.InternalService
 }
 
 func (cr *ClusterRedis) RedisType() config.RedisType {

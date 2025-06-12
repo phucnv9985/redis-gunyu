@@ -17,17 +17,20 @@ func GetSlotDistribution(cli client.Redis) ([]SlotOwner, error) {
 	if err != nil {
 		return nil, err
 	}
-	return parseSlotDistribution(content)
+	return parseSlotDistribution(content, cli.GetExternalService(), cli.GetInternalService())
 }
 
-func parseSlotDistribution(content interface{}) ([]SlotOwner, error) {
+func parseSlotDistribution(content interface{}, externalService *string, internalService *string) ([]SlotOwner, error) {
 
-	outputRedis := config.GetSyncerConfig().Output.Redis
 	shards, ok := content.([]interface{})
 	if !ok {
 		return nil, errors.Errorf("invalid result : %v", content)
 	}
-
+	if externalService != nil {
+		fmt.Printf("ExternalService %s \n", *externalService)
+	} else {
+		fmt.Println("ExternalService is nil")
+	}
 	ret := make([]SlotOwner, 0, 3)
 	// fetch each shard info
 	for _, shard := range shards {
@@ -61,8 +64,8 @@ func parseSlotDistribution(content interface{}) ([]SlotOwner, error) {
 				return nil, errors.WithStack(err)
 			}
 			var combine string
-			if outputRedis.InternalService != nil && outputRedis.ExternalService != nil {
-				combine = strings.Replace(fmt.Sprintf("%s:%d", ip, port), *outputRedis.InternalService, *outputRedis.ExternalService, 1)
+			if internalService != nil && externalService != nil {
+				combine = strings.Replace(fmt.Sprintf("%s:%d", ip, port), *internalService, *externalService, 1)
 			} else {
 				combine = fmt.Sprintf("%s:%d", ip, port)
 			}

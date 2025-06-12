@@ -511,22 +511,24 @@ type RedisConfig struct {
 
 func (rc *RedisConfig) Clone() *RedisConfig {
 	cloned := &RedisConfig{
-		Addresses:      make([]string, len(rc.Addresses)),
-		shards:         make([]*RedisClusterShard, 0, len(rc.shards)),
-		UserName:       rc.UserName,
-		Password:       rc.Password,
-		TlsEnable:      rc.TlsEnable,
-		Type:           rc.Type,
-		Otype:          rc.Type,
-		Version:        rc.Version,
-		slotLeft:       rc.slotLeft,
-		slotRight:      rc.slotRight,
-		slotsMap:       make(map[string]*RedisSlots),
-		slots:          *rc.slots.Clone(),
-		ClusterOptions: rc.ClusterOptions.Clone(),
-		isMigrating:    rc.isMigrating,
-		KeepAlive:      rc.KeepAlive,
-		AliveTime:      rc.AliveTime,
+		Addresses:       make([]string, len(rc.Addresses)),
+		shards:          make([]*RedisClusterShard, 0, len(rc.shards)),
+		UserName:        rc.UserName,
+		Password:        rc.Password,
+		TlsEnable:       rc.TlsEnable,
+		Type:            rc.Type,
+		Otype:           rc.Type,
+		Version:         rc.Version,
+		slotLeft:        rc.slotLeft,
+		slotRight:       rc.slotRight,
+		slotsMap:        make(map[string]*RedisSlots),
+		slots:           *rc.slots.Clone(),
+		ClusterOptions:  rc.ClusterOptions.Clone(),
+		isMigrating:     rc.isMigrating,
+		KeepAlive:       rc.KeepAlive,
+		AliveTime:       rc.AliveTime,
+		InternalService: rc.InternalService,
+		ExternalService: rc.ExternalService,
 	}
 
 	copy(cloned.Addresses, rc.Addresses)
@@ -928,17 +930,19 @@ func (rc *RedisConfig) SelNodes(selAllShards bool, sel SelNodeStrategy) []RedisC
 
 	for i, r := range addrs { // @TODO sync from slaves
 		sre := RedisConfig{
-			Addresses:      []string{r},
-			UserName:       rc.UserName,
-			Password:       rc.Password,
-			TlsEnable:      rc.TlsEnable,
-			Type:           rc.Type,
-			Otype:          rc.Type,
-			ClusterOptions: rc.ClusterOptions.Clone(),
-			isMigrating:    rc.isMigrating,
-			Version:        rc.Version,
-			KeepAlive:      rc.KeepAlive,
-			AliveTime:      rc.AliveTime,
+			Addresses:       []string{r},
+			UserName:        rc.UserName,
+			Password:        rc.Password,
+			TlsEnable:       rc.TlsEnable,
+			Type:            rc.Type,
+			Otype:           rc.Type,
+			ClusterOptions:  rc.ClusterOptions.Clone(),
+			isMigrating:     rc.isMigrating,
+			Version:         rc.Version,
+			KeepAlive:       rc.KeepAlive,
+			AliveTime:       rc.AliveTime,
+			ExternalService: rc.ExternalService,
+			InternalService: rc.InternalService,
 		}
 		sre.SetClusterShards([]*RedisClusterShard{allShards[i]})
 		ret = append(ret, sre)

@@ -46,6 +46,8 @@ type Options struct {
 
 	HandleMoveError bool
 	HandleAskError  bool
+	ExternalService *string
+	InternalService *string
 
 	logger log.Logger
 }
@@ -82,6 +84,8 @@ type Cluster struct {
 	handleMoveError bool
 	handleAskError  bool
 	logger          log.Logger
+	externalService *string
+	internalService *string
 
 	safeRand *util.SafeRand
 }
@@ -108,6 +112,8 @@ func NewCluster(options *Options) (*Cluster, error) {
 		logger:          log.WithLogger(config.LogModuleName("[redis cluster] ")),
 		safeRand:        util.NewSafeRand(time.Now().Unix()),
 	}
+	cluster.externalService = options.ExternalService
+	cluster.internalService = options.InternalService
 	cluster.pipeline = &batchPipeline{
 		cluster: cluster,
 	}
@@ -267,6 +273,14 @@ func (cluster *Cluster) NewBatcher(pipeline bool) common.CmdBatcher {
 		return cluster.pipeline.NewBatcher()
 	}
 	return cluster.NewBatch()
+}
+
+func (cluster *Cluster) GetExternalService() *string {
+	return cluster.externalService
+}
+
+func (cluster *Cluster) GetInternalService() *string {
+	return cluster.internalService
 }
 
 // Close cluster connection, any subsequent method call will fail.
@@ -584,12 +598,16 @@ func (cluster *Cluster) update(node *redisNode) error {
 
 	t := time.Now()
 	cluster.updateTime = t
-	outputRedis := config.GetSyncerConfig().Output.Redis
+	if cluster.externalService != nil {
+		fmt.Printf("ExternalService %s \n", *cluster.externalService)
+	} else {
+		fmt.Printf("ExternalService is nil\n")
+	}
 	for addr, slot := range slots {
 		cluster.logger.Infof("addr %s", addr)
 		var addr1 string
-		if outputRedis.InternalService != nil && outputRedis.ExternalService != nil {
-			addr1 = strings.Replace(addr, *outputRedis.InternalService, *outputRedis.ExternalService, 1)
+		if cluster.internalService != nil && cluster.externalService != nil {
+			addr1 = strings.Replace(addr, *cluster.internalService, *cluster.externalService, 1)
 		} else {
 			addr1 = addr
 		}
