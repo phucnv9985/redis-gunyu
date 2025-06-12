@@ -100,6 +100,14 @@ func (r *RedisConn) Addresses() []string {
 	return r.cfg.Addresses
 }
 
+func (r *RedisConn) GetExternalService() *string {
+	return r.cfg.ExternalService
+}
+
+func (r *RedisConn) GetInternalService() *string {
+	return r.cfg.InternalService
+}
+
 func (r *RedisConn) doGetString(cmd string, args ...interface{}) (string, error) {
 	err := r.sendAndFlush(cmd, args...)
 	if err != nil {

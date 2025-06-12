@@ -24,6 +24,8 @@ type Redis interface {
 	Addresses() []string
 
 	NewBatcher(pipeline bool) common.CmdBatcher
+	GetExternalService() *string
+	GetInternalService() *string
 
 	// for cluster
 	IterateNodes(result func(string, interface{}, error), cmd string, args ...interface{})
