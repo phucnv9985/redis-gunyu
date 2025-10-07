@@ -1,0 +1,341 @@
+<?xml version="1.0" ?>
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+	<edmx:DataServices>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Domain.Entities">
+			<EntityType Name="Category">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
+				<Property Name="Description" Type="Edm.String"/>
+				<Property Name="Icon" Type="Edm.String"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Requests" Type="Collection(Domain.Entities.Request)"/>
+			</EntityType>
+			<EntityType Name="Request">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="RequesterId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="Title" Type="Edm.String" Nullable="false"/>
+				<Property Name="Description" Type="Edm.String" Nullable="false"/>
+				<Property Name="ResourceType" Type="Edm.String" Nullable="false"/>
+				<Property Name="ResourceName" Type="Edm.String" Nullable="false"/>
+				<Property Name="Author" Type="Edm.String"/>
+				<Property Name="PagesNeeded" Type="Edm.String"/>
+				<Property Name="CategoryId" Type="Edm.Guid"/>
+				<Property Name="UrgencyLevel" Type="Edm.String"/>
+				<Property Name="PriceOffered" Type="Edm.Decimal" Nullable="false" Scale="Variable"/>
+				<Property Name="Location" Type="Edm.String"/>
+				<Property Name="Coordinates" Type="NetTopologySuite.Geometries.Point"/>
+				<Property Name="Status" Type="Edm.String"/>
+				<Property Name="Deadline" Type="Edm.DateTimeOffset"/>
+				<Property Name="SearchVector" Type="Collection(NpgsqlTypes.Lexeme)"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Category" Type="Domain.Entities.Category">
+					<ReferentialConstraint Property="CategoryId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="Conversations" Type="Collection(Domain.Entities.Conversation)"/>
+				<NavigationProperty Name="Escrows" Type="Collection(Domain.Entities.Escrow)"/>
+				<NavigationProperty Name="RequestResponses" Type="Collection(Domain.Entities.RequestResponse)"/>
+				<NavigationProperty Name="Requester" Type="Domain.Entities.Profile" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="Conversation">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="RequestId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="ResponseId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="RequesterId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="ResponderId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="LastMessageAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Escrow" Type="Domain.Entities.Escrow"/>
+				<NavigationProperty Name="FileGroups" Type="Collection(Domain.Entities.FileGroup)"/>
+				<NavigationProperty Name="Messages" Type="Collection(Domain.Entities.Message)"/>
+				<NavigationProperty Name="Request" Type="Domain.Entities.Request" Nullable="false">
+					<ReferentialConstraint Property="RequestId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="Requester" Type="Domain.Entities.Profile" Nullable="false"/>
+				<NavigationProperty Name="Responder" Type="Domain.Entities.Profile" Nullable="false"/>
+				<NavigationProperty Name="Response" Type="Domain.Entities.RequestResponse" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="Escrow">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="ConversationId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="RequestId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="ResponseId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="RequesterId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="ResponderId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="Amount" Type="Edm.Decimal" Nullable="false" Scale="Variable"/>
+				<Property Name="Description" Type="Edm.String"/>
+				<Property Name="Status" Type="Edm.String"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Conversation" Type="Domain.Entities.Conversation" Nullable="false">
+					<ReferentialConstraint Property="ConversationId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="EscrowFiles" Type="Collection(Domain.Entities.EscrowFile)"/>
+				<NavigationProperty Name="Request" Type="Domain.Entities.Request" Nullable="false">
+					<ReferentialConstraint Property="RequestId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="Requester" Type="Domain.Entities.Profile" Nullable="false"/>
+				<NavigationProperty Name="Responder" Type="Domain.Entities.Profile" Nullable="false"/>
+				<NavigationProperty Name="Response" Type="Domain.Entities.RequestResponse" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="EscrowFile">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="EscrowId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="FileName" Type="Edm.String" Nullable="false"/>
+				<Property Name="FileSize" Type="Edm.Int64" Nullable="false"/>
+				<Property Name="FileType" Type="Edm.String" Nullable="false"/>
+				<Property Name="UploadedBy" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="StoragePath" Type="Edm.String" Nullable="false"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Escrow" Type="Domain.Entities.Escrow" Nullable="false">
+					<ReferentialConstraint Property="EscrowId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="UploadedByNavigation" Type="Domain.Entities.Profile" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="Profile">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Email" Type="Edm.String" Nullable="false"/>
+				<Property Name="FullName" Type="Edm.String"/>
+				<Property Name="AvatarUrl" Type="Edm.String"/>
+				<Property Name="Bio" Type="Edm.String"/>
+				<Property Name="Institution" Type="Edm.String"/>
+				<Property Name="Location" Type="Edm.String"/>
+				<Property Name="Coordinates" Type="NetTopologySuite.Geometries.Point"/>
+				<Property Name="UserType" Type="Edm.String"/>
+				<Property Name="Rating" Type="Edm.Decimal" Scale="Variable"/>
+				<Property Name="TotalRequests" Type="Edm.Int32"/>
+				<Property Name="TotalResponses" Type="Edm.Int32"/>
+				<Property Name="VerificationStatus" Type="Edm.String"/>
+				<Property Name="NotificationPreferences" Type="Edm.String"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="ConversationRequesters" Type="Collection(Domain.Entities.Conversation)"/>
+				<NavigationProperty Name="ConversationResponders" Type="Collection(Domain.Entities.Conversation)"/>
+				<NavigationProperty Name="EscrowFiles" Type="Collection(Domain.Entities.EscrowFile)"/>
+				<NavigationProperty Name="EscrowRequesters" Type="Collection(Domain.Entities.Escrow)"/>
+				<NavigationProperty Name="EscrowResponders" Type="Collection(Domain.Entities.Escrow)"/>
+				<NavigationProperty Name="FileGroups" Type="Collection(Domain.Entities.FileGroup)"/>
+				<NavigationProperty Name="Messages" Type="Collection(Domain.Entities.Message)"/>
+				<NavigationProperty Name="Notifications" Type="Collection(Domain.Entities.Notification)"/>
+				<NavigationProperty Name="RequestResponses" Type="Collection(Domain.Entities.RequestResponse)"/>
+				<NavigationProperty Name="Requests" Type="Collection(Domain.Entities.Request)"/>
+				<NavigationProperty Name="ResourceDeclarations" Type="Collection(Domain.Entities.ResourceDeclaration)"/>
+				<NavigationProperty Name="UserLocations" Type="Collection(Domain.Entities.UserLocation)"/>
+				<NavigationProperty Name="User" Type="Domain.Entities.User" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="FileGroup">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="ConversationId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="UploaderId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Conversation" Type="Domain.Entities.Conversation" Nullable="false">
+					<ReferentialConstraint Property="ConversationId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="Files" Type="Collection(Domain.Entities.File)"/>
+				<NavigationProperty Name="Messages" Type="Collection(Domain.Entities.Message)"/>
+				<NavigationProperty Name="Uploader" Type="Domain.Entities.Profile" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="File">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="FileGroupId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="FileName" Type="Edm.String" Nullable="false"/>
+				<Property Name="FileSize" Type="Edm.Int64" Nullable="false"/>
+				<Property Name="FileType" Type="Edm.String" Nullable="false"/>
+				<Property Name="StoragePath" Type="Edm.String" Nullable="false"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="FileGroup" Type="Domain.Entities.FileGroup" Nullable="false">
+					<ReferentialConstraint Property="FileGroupId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="Message">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="ConversationId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="SenderId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="Content" Type="Edm.String" Nullable="false"/>
+				<Property Name="FileGroupId" Type="Edm.Guid"/>
+				<Property Name="MessageType" Type="Edm.String"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Conversation" Type="Domain.Entities.Conversation" Nullable="false">
+					<ReferentialConstraint Property="ConversationId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="FileGroup" Type="Domain.Entities.FileGroup">
+					<ReferentialConstraint Property="FileGroupId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+				<NavigationProperty Name="Sender" Type="Domain.Entities.Profile" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="Notification">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="UserId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="Title" Type="Edm.String" Nullable="false"/>
+				<Property Name="Message" Type="Edm.String" Nullable="false"/>
+				<Property Name="Type" Type="Edm.String" Nullable="false"/>
+				<Property Name="Data" Type="Edm.String"/>
+				<Property Name="IsRead" Type="Edm.Boolean"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="User" Type="Domain.Entities.Profile" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="RequestResponse">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="RequestId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="ProviderId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="Message" Type="Edm.String"/>
+				<Property Name="ProposedPrice" Type="Edm.Decimal" Scale="Variable"/>
+				<Property Name="EstimatedDeliveryTime" Type="Edm.String"/>
+				<Property Name="Status" Type="Edm.String"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Conversations" Type="Collection(Domain.Entities.Conversation)"/>
+				<NavigationProperty Name="Escrows" Type="Collection(Domain.Entities.Escrow)"/>
+				<NavigationProperty Name="Provider" Type="Domain.Entities.Profile" Nullable="false"/>
+				<NavigationProperty Name="Request" Type="Domain.Entities.Request" Nullable="false">
+					<ReferentialConstraint Property="RequestId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="ResourceDeclaration">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="UserId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="ResourceType" Type="Edm.String" Nullable="false"/>
+				<Property Name="ResourceName" Type="Edm.String"/>
+				<Property Name="DatabaseId" Type="Edm.Guid"/>
+				<Property Name="InstitutionName" Type="Edm.String"/>
+				<Property Name="AccessDetails" Type="Edm.String"/>
+				<Property Name="IsActive" Type="Edm.Boolean"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Database" Type="Domain.Entities.ResearchDatabase"/>
+				<NavigationProperty Name="User" Type="Domain.Entities.Profile" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="ResearchDatabase">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
+				<Property Name="Description" Type="Edm.String"/>
+				<Property Name="WebsiteUrl" Type="Edm.String"/>
+				<Property Name="AccessType" Type="Edm.String"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="ResourceDeclarations" Type="Collection(Domain.Entities.ResourceDeclaration)"/>
+			</EntityType>
+			<EntityType Name="UserLocation">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="UserId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="Coordinates" Type="NetTopologySuite.Geometries.Point" Nullable="false"/>
+				<Property Name="Address" Type="Edm.String"/>
+				<Property Name="IsCurrent" Type="Edm.Boolean"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="User" Type="Domain.Entities.Profile" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="User">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Email" Type="Edm.String" Nullable="false" MaxLength="255"/>
+				<Property Name="FullName" Type="Edm.String" Nullable="false" MaxLength="255"/>
+				<Property Name="PasswordHash" Type="Edm.String" Nullable="false" MaxLength="255"/>
+				<Property Name="LastLogin" Type="Edm.DateTimeOffset"/>
+				<Property Name="LoginFailCount" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="Profile" Type="Domain.Entities.Profile" Nullable="false"/>
+				<NavigationProperty Name="ExternalLogins" Type="Collection(Domain.Entities.ExternalLogin)"/>
+			</EntityType>
+			<EntityType Name="ExternalLogin">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="UserId" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="ProviderUserId" Type="Edm.String" Nullable="false"/>
+				<Property Name="Provider" Type="Edm.String" Nullable="false"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="UpdatetedAt" Type="Edm.DateTimeOffset"/>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<NavigationProperty Name="User" Type="Domain.Entities.User" Nullable="false">
+					<ReferentialConstraint Property="UserId" ReferencedProperty="Id"/>
+				</NavigationProperty>
+			</EntityType>
+		</Schema>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="NetTopologySuite.Geometries">
+			<ComplexType Name="Point">
+				<Property Name="Coordinates" Type="Collection(NetTopologySuite.Geometries.Coordinate)"/>
+				<Property Name="X" Type="Edm.Double" Nullable="false"/>
+				<Property Name="Y" Type="Edm.Double" Nullable="false"/>
+				<Property Name="Z" Type="Edm.Double" Nullable="false"/>
+				<Property Name="M" Type="Edm.Double" Nullable="false"/>
+				<Property Name="UserData" Type="Edm.Untyped"/>
+				<Property Name="SRID" Type="Edm.Int32" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="Coordinate">
+				<Property Name="X" Type="Edm.Double" Nullable="false"/>
+				<Property Name="Y" Type="Edm.Double" Nullable="false"/>
+				<Property Name="Z" Type="Edm.Double" Nullable="false"/>
+				<Property Name="M" Type="Edm.Double" Nullable="false"/>
+				<Property Name="CoordinateValue" Type="NetTopologySuite.Geometries.Coordinate"/>
+			</ComplexType>
+			<ComplexType Name="CoordinateZ" BaseType="NetTopologySuite.Geometries.Coordinate"/>
+			<ComplexType Name="CoordinateZM" BaseType="NetTopologySuite.Geometries.CoordinateZ"/>
+			<ComplexType Name="CoordinateM" BaseType="NetTopologySuite.Geometries.Coordinate"/>
+		</Schema>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="NpgsqlTypes">
+			<ComplexType Name="Lexeme">
+				<Property Name="Text" Type="Edm.String"/>
+			</ComplexType>
+		</Schema>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Default">
+			<EntityContainer Name="Container">
+				<EntitySet Name="Category" EntityType="Domain.Entities.Category"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
+
