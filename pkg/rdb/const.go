@@ -1,7 +1,8 @@
 package rdb
 
 // var RdbVersion int64 = 10 // redis:7.0.0
-var RdbVersion int64 = 11 // redis:7.2.0
+// var RdbVersion int64 = 11 // redis:7.2.0
+var RdbVersion int64 = 12 // redis:7.4.0
 
 const (
 	RdbObjectString   = iota
@@ -48,6 +49,9 @@ const (
 
 	RdbTypeSetListpack      = 20
 	RdbTypeStreamListPacks3 = 21 // RDB_TYPE_STREAM_LISTPACKS_3
+
+	// Redis 7.4 hash field expiration types
+	RdbTypeHashWithFieldExpiry = 22 // RDB_TYPE_HASH_WITH_FIELD_EXPIRY
 
 	RdbTypeFunction2 = 0xf5
 	RdbTypeFunction  = 0xf6
