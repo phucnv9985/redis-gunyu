@@ -12,7 +12,7 @@
 
 ## redis版本
 
-redis-GunYu支持从4.0到7.2的redis版本。
+redis-GunYu支持从4.0到7.4的redis版本。
 
 ### 源端和目的端
 

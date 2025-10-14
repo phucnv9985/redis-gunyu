@@ -106,6 +106,9 @@ func (rr *RdbReplay) Replay(e *rdb.BinEntry) (err error) {
 			params = append(params, e.Freq)
 		}
 	}
+	
+	// For Redis 7.4+ RDB dumps with hash field expiration, RESTORE may fail
+	// and fall back to command-based replay which handles field expiration properly
 RESTORE:
 	s, err := common.String(rr.Client.Do("restore", params...))
 	if err != nil {
