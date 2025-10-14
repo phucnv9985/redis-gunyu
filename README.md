@@ -57,7 +57,7 @@ The feature matrix of `redis-GunYu` for real-time synchronization
   - High availability of the tool: Supports master-slave mode, self-election based on the latest records, automatic and manual failover; the tool is P2P architecture, minimizing downtime impact
 - Fewer restrictions on Redis
   - Supports different deployment modes of Redis on the source and target, such as cluster or standalone instances
-  - Compatible with different versions of Redis on the source and target, supports from Redis 4.0 to Redis 7.2, see [testing](docs/test_en.md#Compatibility)
+  - Compatible with different versions of Redis on the source and target, supports from Redis 4.0 to Redis 7.4, see [testing](docs/test_en.md#Compatibility)
 - More flexible data consistency strategies, automatic switching
   - When the shards distribution of the source and target is the same, batch writes in pseudo-transaction mode, and offsets are updated in real-time, maximizing inconsistent
   - When the shard distribution of the source and target is different, offsets are updated periodically

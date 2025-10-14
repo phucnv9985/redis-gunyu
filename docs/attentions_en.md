@@ -10,7 +10,7 @@
 
 ## Redis Version
 
-redis-GunYu supports Redis versions from 4.0 to 7.2.
+redis-GunYu supports Redis versions from 4.0 to 7.4.
 
 ### Source and Target 
 

@@ -91,6 +91,10 @@ Testing the compatibility between different versions of RDB and AOF; RDB testing
 | 6.0  | 5.0  | Passed  |   |
 | 6.0  | 4.0  | Passed  |   |
 | 5.0  | 4.0  | Passed  |   |
+| 7.4  | 7.2  | Passed  | Hash field expiration data syncs but TTL is lost on target |
+| 7.4  | 7.0  | Passed  | Hash field expiration data syncs but TTL is lost on target |
+| 7.2  | 7.4  | Passed  | Standard hash sync, no field expiration features |
+| 7.0  | 7.4  | Passed  | Standard hash sync, no field expiration features |
 
 
 
