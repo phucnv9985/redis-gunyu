@@ -41,6 +41,8 @@ func runCmd() error {
 		cmder = cmd.NewRdbCmd()
 	case "aof":
 		cmder = cmd.NewAofCmd()
+	case "odata":
+		cmder = cmd.NewODataCmd()
 	default:
 		panicIfError(fmt.Errorf("does not support command(%s)", config.GetFlag().Cmd))
 	}
