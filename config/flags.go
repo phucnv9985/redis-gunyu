@@ -27,6 +27,7 @@ type Flags struct {
 	Cmd        string
 	DiffCmd    DiffCmdFlags
 	AofCmd     AofCmdFlags
+	ODataCmd   ODataCmdFlags
 }
 
 type RdbCmdConfig struct {
@@ -86,8 +87,16 @@ type AofCmdFlags struct {
 	Size   int64
 }
 
+type ODataCmdFlags struct {
+	URL     string
+	Output  string
+	Format  string
+	Token   string
+	APIKey  string
+}
+
 func LoadFlags() error {
-	flag.StringVar(&flagVar.Cmd, "cmd", "sync", "command name : sync/rdb/diff")
+	flag.StringVar(&flagVar.Cmd, "cmd", "sync", "command name : sync/rdb/diff/aof/odata")
 	flag.StringVar(&flagVar.ConfigPath, "conf", "", "config file path")
 
 	flag.StringVar(&flagVar.DiffCmd.DiffMode, "diff.mode", "scan", "scan/rdb")
@@ -99,6 +108,12 @@ func LoadFlags() error {
 	flag.StringVar(&flagVar.AofCmd.Path, "aof.path", "", "aof path")
 	flag.Int64Var(&flagVar.AofCmd.Offset, "aof.offset", 0, "aof offset")
 	flag.Int64Var(&flagVar.AofCmd.Size, "aof.size", -1, "aof size")
+
+	flag.StringVar(&flagVar.ODataCmd.URL, "odata.url", "", "OData service URL")
+	flag.StringVar(&flagVar.ODataCmd.Output, "odata.output", "", "output file path (default: stdout)")
+	flag.StringVar(&flagVar.ODataCmd.Format, "odata.format", "text", "output format: text/json/xml")
+	flag.StringVar(&flagVar.ODataCmd.Token, "odata.token", "", "OAuth token for authentication")
+	flag.StringVar(&flagVar.ODataCmd.APIKey, "odata.apikey", "", "API key for authentication")
 
 	tmpSyncerCfg := SyncConfig{}
 	FlagsParseToStruct("sync", &tmpSyncerCfg)
