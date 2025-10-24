@@ -133,6 +133,11 @@ func (l *Loader) Next() (entry *BinEntry, err error) {
 			db_size := l.ReadLengthP()
 			expire_size := l.ReadLengthP()
 			l.logger.Debugf("RdbFlagResizeDB : dbsize(%d), expiresize(%d)", db_size, expire_size)
+		case RdbFlagSlotInfo:
+			slot_id := l.ReadLengthP()
+			slot_size := l.ReadLengthP()
+			expires_slot_size := l.ReadLengthP()
+			l.logger.Debugf("RdbFlagSlotInfo : slot_id(%d), slot_size(%d), expires_slot_size(%d)", slot_id, slot_size, expires_slot_size)
 		case RdbFlagExpiryMS:
 			ttlms := l.ReadUint64P()
 			entry.ExpireAt = ttlms

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"time"
 
 	"github.com/mgtv-tech/redis-GunYu/pkg/digest"
 	rerror "github.com/mgtv-tech/redis-GunYu/pkg/errors"
@@ -80,7 +81,7 @@ func NewParser(t byte, rdbVersion int64, targetRedisVersion string, targetFuncti
 		p.rdbVersion = rdbVersion
 		p.otype = RdbObjectZSet
 		return p, nil
-	case RdbTypeHash, RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack:
+	case RdbTypeHash, RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack, RdbTypeHashMetadataPreGa, RdbTypeHashMetaData, RdbTypeHashListPackEx, RdbTypeHashListPackExPreGa:
 		// hash
 		p := &HashPaser{}
 		p.rtype = t
@@ -253,8 +254,27 @@ func (hp *HashPaser) ReadBuffer(lr *Loader) {
 				break
 			}
 		}
-	case RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack:
+	case RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack, RdbTypeHashListPackEx, RdbTypeHashListPackExPreGa:
 		r.ReadStringP()
+	case RdbTypeHashMetadataPreGa, RdbTypeHashMetaData:
+		// Redis 7.4 hash with field expiration
+		var n uint32
+		if hp.totalEntries-hp.readEntries == 0 {
+			rlen := r.ReadLengthP()
+			n = rlen
+			hp.totalEntries = n
+		} else {
+			n = hp.totalEntries - hp.readEntries
+		}
+		for i := 0; i < int(n); i++ {
+			r.ReadStringP() // field
+			r.ReadStringP() // value
+			r.ReadUint64P() // field expiration timestamp (ms)
+			hp.readEntries++
+			if hp.buf.Len() > maxBinEntryBuffer && i != int(n-1) { // gc
+				break
+			}
+		}
 	default:
 		panic(fmt.Errorf("unknown hash type : %v", hp.rtype))
 	}
@@ -269,8 +289,10 @@ func (hp *HashPaser) ExecCmd(cb RdbObjExecutor) {
 		hp.zipmap(cb)
 	case RdbTypeHash:
 		hp.hash(cb)
-	case RdbTypeHashListpack:
+	case RdbTypeHashListpack, RdbTypeHashListPackEx, RdbTypeHashListPackExPreGa:
 		hp.listpack(cb)
+	case RdbTypeHashMetadataPreGa, RdbTypeHashMetaData:
+		hp.hashWithFieldExpiry(cb)
 	}
 }
 
@@ -314,6 +336,35 @@ func (hp *HashPaser) listpack(cb RdbObjExecutor) {
 		member := listp.Next()
 		score := listp.Next()
 		panicIfErr(cb(hp.cmd, hp.key, score, member))
+	}
+}
+
+func (hp *HashPaser) hashWithFieldExpiry(cb RdbObjExecutor) {
+	r := NewRdbReader(bytes.NewReader(hp.buf.Bytes()))
+	curNo := hp.readEntries - hp.historyEntries
+	if hp.FirstBin() {
+		r.ReadLengthP()
+	}
+	
+	// Check if target Redis supports hash field expiration (Redis 7.4+)
+	supportsFieldExpiry := util.VersionGE(hp.targetRedisVersion, "7.4", util.VersionMajor)
+	
+	for i := 0; i < int(curNo); i++ {
+		field := r.ReadStringP()
+		value := r.ReadStringP()
+		fieldExpiry := r.ReadUint64P()
+		
+		// Set the hash field
+		panicIfErr(cb(hp.cmd, hp.key, field, value))
+		
+		// Set field expiration if supported and not expired
+		if supportsFieldExpiry && fieldExpiry > 0 {
+			now := uint64(time.Now().UnixNano()) / uint64(time.Millisecond)
+			if fieldExpiry > now {
+				ttl := fieldExpiry - now
+				panicIfErr(cb("HPEXPIRE", hp.key, field, ttl))
+			}
+		}
 	}
 }
 
