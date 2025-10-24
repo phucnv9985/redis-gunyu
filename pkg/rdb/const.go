@@ -51,19 +51,23 @@ const (
 	RdbTypeStreamListPacks3 = 21 // RDB_TYPE_STREAM_LISTPACKS_3
 
 	// Redis 7.4 hash field expiration types
-	RdbTypeHashWithFieldExpiry = 22 // RDB_TYPE_HASH_WITH_FIELD_EXPIRY
+	RdbTypeHashMetadataPreGa   = 22 /* Hash with HFEs. Doesn't attach min TTL at start (7.4 RC) */
+	RdbTypeHashListPackExPreGa = 23 /* Hash LP with HFEs. Doesn't attach min TTL at start (7.4 RC) */
+	RdbTypeHashMetaData        = 24 /* Hash with HFEs. Attach min TTL at start */
+	RdbTypeHashListPackEx      = 25 /* Hash LP with HFEs. Attach min TTL at start */
 
-	RdbTypeFunction2 = 0xf5
-	RdbTypeFunction  = 0xf6
-	RdbFlagModuleAux = 0xf7
-	RdbFlagIdle      = 0xf8
-	RdbFlagFreq      = 0xf9
-	RdbFlagAUX       = 0xfa
-	RdbFlagResizeDB  = 0xfb
-	RdbFlagExpiryMS  = 0xfc
-	RdbFlagExpiry    = 0xfd
-	RdbFlagSelectDB  = 0xfe
-	RdbFlagEOF       = 0xff
+	RdbTypeFunction2  = 0xf5
+	RdbTypeFunction   = 0xf6
+	RdbFlagModuleAux  = 0xf7
+	RdbFlagIdle       = 0xf8
+	RdbFlagFreq       = 0xf9
+	RdbFlagAUX        = 0xfa
+	RdbFlagResizeDB   = 0xfb
+	RdbFlagExpiryMS   = 0xfc
+	RdbFlagExpiry     = 0xfd
+	RdbFlagSlotInfo   = 0xf4
+	RdbFlagSelectDB   = 0xfe
+	RdbFlagEOF        = 0xff
 
 	// Module serialized values sub opcodes
 	rdbModuleOpcodeEof    = 0 // End of module value.
@@ -77,11 +81,11 @@ const (
 )
 
 const (
-	rdb6bitLen  = 0
-	rdb14bitLen = 1
-	rdb32bitLen = 0x80
-	rdb64bitLen = 0x81
-	rdbEncVal   = 3
+	rdb6bitLen   = 0
+	rdb14bitLen  = 1
+	rdb32bitLen  = 0x80
+	rdb64bitLen  = 0x81
+	rdbEncVal    = 3
 
 	rdbEncInt8  = 0
 	rdbEncInt16 = 1

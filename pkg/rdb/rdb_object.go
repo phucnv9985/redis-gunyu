@@ -81,7 +81,7 @@ func NewParser(t byte, rdbVersion int64, targetRedisVersion string, targetFuncti
 		p.rdbVersion = rdbVersion
 		p.otype = RdbObjectZSet
 		return p, nil
-	case RdbTypeHash, RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack, RdbTypeHashWithFieldExpiry:
+	case RdbTypeHash, RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack, RdbTypeHashMetadataPreGa, RdbTypeHashMetaData, RdbTypeHashListPackEx, RdbTypeHashListPackExPreGa:
 		// hash
 		p := &HashPaser{}
 		p.rtype = t
@@ -254,9 +254,9 @@ func (hp *HashPaser) ReadBuffer(lr *Loader) {
 				break
 			}
 		}
-	case RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack:
+	case RdbTypeHashZipmap, RdbTypeHashZiplist, RdbTypeHashListpack, RdbTypeHashListPackEx, RdbTypeHashListPackExPreGa:
 		r.ReadStringP()
-	case RdbTypeHashWithFieldExpiry:
+	case RdbTypeHashMetadataPreGa, RdbTypeHashMetaData:
 		// Redis 7.4 hash with field expiration
 		var n uint32
 		if hp.totalEntries-hp.readEntries == 0 {
@@ -289,9 +289,9 @@ func (hp *HashPaser) ExecCmd(cb RdbObjExecutor) {
 		hp.zipmap(cb)
 	case RdbTypeHash:
 		hp.hash(cb)
-	case RdbTypeHashListpack:
+	case RdbTypeHashListpack, RdbTypeHashListPackEx, RdbTypeHashListPackExPreGa:
 		hp.listpack(cb)
-	case RdbTypeHashWithFieldExpiry:
+	case RdbTypeHashMetadataPreGa, RdbTypeHashMetaData:
 		hp.hashWithFieldExpiry(cb)
 	}
 }
