@@ -186,6 +186,7 @@ type RedisOutputConfig struct {
 	KeyExistsLog           bool               `yaml:"keyExistsLog"`
 	FunctionExists         string             `yaml:"functionExists"`
 	MaxProtoBulkLen        int                `yaml:"maxProtoBulkLen"` // proto-max-bulk-len, default value of redis is 512MiB
+	SkipSameValue          bool               `yaml:"skipSameValue"`   // Skip SET command if target key has same value
 	TargetDb               int                `yaml:"-"`
 	TargetDbMap            map[int]int        `yaml:"targetDbMap"`
 	BatchCmdCount          uint               `yaml:"batchCmdCount"`
@@ -1343,6 +1344,7 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 
 	inTransaction := false // in transaction batch, [multi, cmds, exec], don't send to redis separatelly
 	lastOffset := int64(-1)
+	currentCheckDB := -1 // Track current DB for skip checks to avoid unnecessary SELECTs
 	for {
 		transactionBatch := transactionMode
 		shouldUpdateCP := ro.cfg.EnableResumeFromBreakPoint && transactionMode
@@ -1359,6 +1361,19 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 			lastOffset = item.Offset
 			if item.Cmd == "ping" { // skip ping command, keepaliveTicker handle it[multi/exec, ping issue for cluster]
 				continue
+			}
+
+			// Check if SET command should be skipped (same value already exists in target)
+			if item.Cmd == "set" && ro.cfg.SkipSameValue {
+				skip, err := ro.checkAndSkipSameValue(replayWait.Context(), conn, item, &currentCheckDB)
+				if err != nil {
+					ro.logger.Debugf("check same value error : key(%v), err(%v)", item.Args, err)
+					// On error, proceed with SET
+				} else if skip {
+					// Skip this command, continue to next
+					ro.logger.Debugf("Skip item with command set on currentCheckDB(%v), continue to next item", currentCheckDB)
+					continue
+				}
 			}
 
 			txnStatus, needFlush = transactionStatus(item.Cmd, txnStatus)
@@ -1457,6 +1472,76 @@ func (ro *RedisOutput) selectDB(currentDB int, originDB int) (int, bool) {
 	}
 
 	return targetDB, targetDB != currentDB
+}
+
+// checkAndSkipSameValue checks if a SET command should be skipped because the target key already has the same value
+func (ro *RedisOutput) checkAndSkipSameValue(ctx context.Context, conn client.Redis, cmd cmdExecution, currentCheckDB *int) (bool, error) {
+	if !ro.cfg.SkipSameValue {
+		return false, nil
+	}
+
+	// Only check simple SET commands (not SETEX, SETNX, etc.)
+	if cmd.Cmd != "set" || len(cmd.Args) < 2 {
+		return false, nil
+	}
+
+	// Extract key and value
+	keyBytes, ok := cmd.Args[0].([]byte)
+	if !ok {
+		return false, nil
+	}
+	key := util.BytesToString(keyBytes)
+
+	valueBytes, ok := cmd.Args[1].([]byte)
+	if !ok {
+		return false, nil
+	}
+	sourceValue := valueBytes
+
+	// Select the correct database (only if different from current)
+	if cmd.Db >= 0 {
+		targetDB, _ := ro.selectDB(-1, cmd.Db)
+		if *currentCheckDB != targetDB {
+			if err := redis.SelectDB(conn, uint32(targetDB)); err != nil {
+				ro.logger.Debugf("select db error for skip check : db(%d), err(%v)", targetDB, err)
+				return false, nil // On error, proceed with SET
+			}
+			*currentCheckDB = targetDB
+		}
+	}
+
+	// Check if key exists
+	exists, err := common.Int64(conn.Do("exists", key))
+	if err != nil {
+		ro.logger.Debugf("exists check error for skip : key(%s), err(%v)", key, err)
+		return false, nil // On error, proceed with SET
+	}
+
+	if exists == 0 {
+		// Key doesn't exist, proceed with SET
+		return false, nil
+	}
+
+	// Key exists, get the value
+	targetValue, err := common.Bytes(conn.Do("get", key))
+	if err != nil {
+		if errors.Is(err, common.ErrNil) {
+			// Key was deleted between EXISTS and GET, proceed with SET
+			return false, nil
+		}
+		ro.logger.Debugf("get value error for skip : key(%s), err(%v)", key, err)
+		return false, nil // On error, proceed with SET
+	}
+
+	// Compare values
+	if bytes.Equal(sourceValue, targetValue) {
+		ro.logger.Debugf("skip SET command : key(%s), value already exists and matches, sourceValue(%s), targetValue(%s)", key, util.BytesToString(sourceValue), util.BytesToString(targetValue))
+		ro.filterCounterAdd(1)
+		return true, nil // Skip this command
+	}
+
+	// Values are different, proceed with SET
+	return false, nil
 }
 
 func handleDirectError(err error) error {

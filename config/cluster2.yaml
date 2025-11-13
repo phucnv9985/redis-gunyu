@@ -25,6 +25,7 @@ output:
   replay:
     resumeFromBreakPoint: true
     keyExists: replace
+    skipSameValue: true
     metric: true
     targetDb: -1
     replayTransaction: true
