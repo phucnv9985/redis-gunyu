@@ -265,6 +265,7 @@ type ReplayConfig struct {
 	KeyExistsLog           bool          `yaml:"keyExistsLog"`
 	FunctionExists         string        `yaml:"functionExists"`
 	MaxProtoBulkLen        int           `yaml:"maxProtoBulkLen"` // proto-max-bulk-len, default value of redis is 512MiB
+	SkipSameValue          bool          `yaml:"skipSameValue"`   // Skip SET command if target key has same value
 	TargetDbCfg            *int          `yaml:"targetDb" default:"-1"`
 	TargetDb               int           `yaml:"-"`
 	TargetDbMap            map[int]int   `yaml:"targetDbMap"`

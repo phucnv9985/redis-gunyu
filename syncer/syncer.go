@@ -444,6 +444,7 @@ func (s *syncer) newOutput() (*RedisOutput, error) {
 		KeyExistsLog:               cfg.Replay.KeyExistsLog,
 		FunctionExists:             cfg.Replay.FunctionExists,
 		MaxProtoBulkLen:            cfg.Replay.MaxProtoBulkLen,
+		SkipSameValue:              cfg.Replay.SkipSameValue,
 		TargetDb:                   cfg.Replay.TargetDb,
 		TargetDbMap:                cfg.Replay.TargetDbMap,
 		BatchCmdCount:              cfg.Replay.BatchCmdCount,
