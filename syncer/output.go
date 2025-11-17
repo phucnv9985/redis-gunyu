@@ -1407,7 +1407,7 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 				continue
 			}
 
-			ro.logger.Debugf("Command item.Cmd (%v)", item.Cmd)
+			ro.logger.Debugf("Command item.Cmd (%v), item.Args (%v)", item.Cmd, item.Args)
 			// Check if SET command should be skipped (same value already exists in target)
 			if item.Cmd == "set" && ro.cfg.SkipSameValue {
 				skip, err := ro.checkAndSkipSameValue(replayWait.Context(), conn, item, &currentCheckDB)
