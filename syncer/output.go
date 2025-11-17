@@ -45,6 +45,8 @@ type RedisOutput struct {
 	sendCounterRt      atomic.Int64
 	rdbFilterCounterRt atomic.Int64
 	rdbSendCounterRt   atomic.Int64
+	activeConnections  atomic.Int64
+	totalConnections   atomic.Int64
 
 	cpGuard         sync.RWMutex
 	checkpointInMem checkpoint.CheckpointInfo
@@ -130,6 +132,18 @@ var (
 		Namespace: config.AppName,
 		Subsystem: "output",
 		Name:      "sync_delay",
+		Labels:    []string{"input"},
+	})
+	connectionCounter = metric.NewCounterVec(metric.CounterVecOpts{
+		Namespace: config.AppName,
+		Subsystem: "output",
+		Name:      "connection_total",
+		Labels:    []string{"input"},
+	})
+	activeConnectionsGauge = metric.NewGaugeVec(metric.GaugeVecOpts{
+		Namespace: config.AppName,
+		Subsystem: "output",
+		Name:      "active_connections",
 		Labels:    []string{"input"},
 	})
 )
@@ -222,7 +236,7 @@ func (ro *RedisOutput) SetRunId(ctx context.Context, id string) error {
 		if err != nil {
 			return err
 		}
-		defer cli.Close()
+		defer ro.CloseRedisConn(cli)
 		err = checkpoint.UpdateCheckpoint(cli, ro.cfg.CheckpointName, []string{id, ro.cfg.RunId})
 		if err != nil {
 			ro.logger.Errorf("update checkpoint error : cp(%s), runId(%s,%s), err(%v)", ro.cfg.CheckpointName, id, ro.cfg.RunId, err)
@@ -323,7 +337,7 @@ func (ro *RedisOutput) rdbReplay(ctx context.Context, pipe <-chan *rdb.BinEntry)
 		ro.logger.Errorf("new redis error : redis(%v), err(%v)", ro.cfg.Redis.Addresses, err)
 		return err
 	}
-	defer cli.Close()
+	defer ro.CloseRedisConn(cli)
 
 	var ticker = time.Now()
 	pingC := 0
@@ -550,7 +564,7 @@ func (ro *RedisOutput) setCheckpoint(ctx context.Context, runId string, offset i
 		if err != nil {
 			return err
 		}
-		defer cli.Close()
+		defer ro.CloseRedisConn(cli)
 		return checkpoint.SetCheckpoint(cli, checkpointKv)
 	}, 5, time.Second*2, 0.3)
 	ro.logger.Log(err, "set checkpoint : checkpoint(%v), err(%v)", checkpointKv, err)
@@ -561,8 +575,38 @@ func (ro *RedisOutput) NewRedisConn(ctx context.Context) (conn client.Redis, err
 	conn, err = client.NewRedis(ro.cfg.Redis)
 	if err != nil {
 		ro.logger.Errorf("new redis error : redis(%v), err(%v)", ro.cfg.Redis.Addresses, err)
+		return nil, err
 	}
-	return conn, err
+
+	// Track connection creation
+	connectionCounter.Inc(ro.cfg.InputName)
+	totalCount := ro.totalConnections.Add(1)
+	activeCount := ro.activeConnections.Add(1)
+	activeConnectionsGauge.Set(float64(activeCount), ro.cfg.InputName)
+	ro.logger.Debugf("new redis connection created : active(%d), total(%d), redis(%v)", activeCount, totalCount, ro.cfg.Redis.Addresses)
+	return conn, nil
+}
+
+// CloseRedisConn tracks connection closure
+func (ro *RedisOutput) CloseRedisConn(conn client.Redis) error {
+	if conn == nil {
+		return nil
+	}
+	err := conn.Close()
+	if err != nil {
+		ro.logger.Debugf("close redis connection error : err(%v)", err)
+	}
+
+	// Track connection closure
+	activeCount := ro.activeConnections.Add(-1)
+	if activeCount < 0 {
+		activeCount = 0
+		ro.activeConnections.Store(0)
+	}
+	activeConnectionsGauge.Set(float64(activeCount), ro.cfg.InputName)
+	ro.logger.Debugf("redis connection closed : active(%d)", activeCount)
+
+	return err
 }
 
 func (ro *RedisOutput) sendAof(ctx context.Context, runId string, reader *bufio.Reader, offset int64, nsize int64) (err error) {
@@ -592,7 +636,7 @@ func (ro *RedisOutput) sendAof(ctx context.Context, runId string, reader *bufio.
 		//err = errors.Join(ErrRestart, err) // check typology
 		return
 	}
-	defer conn.Close()
+	defer ro.CloseRedisConn(conn)
 
 	// send cmds and check result sequentially, maybe client get connection from pool, result in inconsitent of commands
 	// if ro.cfg.CanTransaction {
@@ -799,7 +843,7 @@ func (ro *RedisOutput) checkpoint(ctx context.Context, runIds []string) (cpi *ch
 	if err != nil {
 		return nil, 0, err
 	}
-	defer cli.Close()
+	defer ro.CloseRedisConn(cli)
 	cpKv, _dbid, err := checkpoint.GetCheckpoint(cli, ro.cfg.CheckpointName, runIds)
 	if err != nil {
 		ro.logger.Errorf("get checkpoint error : name(%s), runIds(%v), err(%v)", ro.cfg.CheckpointName, runIds, err)
@@ -899,7 +943,7 @@ func (ro *RedisOutput) sendCmdsInTransaction(replayWait usync.WaitCloser, conn c
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
+	defer ro.CloseRedisConn(conn)
 
 	usync.SafeGo(func() {
 		err := ro.outputReply(replayWait, conn)
@@ -1363,6 +1407,7 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 				continue
 			}
 
+			ro.logger.Debugf("Command item.Cmd (%v)", item.Cmd)
 			// Check if SET command should be skipped (same value already exists in target)
 			if item.Cmd == "set" && ro.cfg.SkipSameValue {
 				skip, err := ro.checkAndSkipSameValue(replayWait.Context(), conn, item, &currentCheckDB)
@@ -1374,6 +1419,11 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 					ro.logger.Debugf("Skip item with command set on currentCheckDB(%v), continue to next item", currentCheckDB)
 					continue
 				}
+			}
+			if item.Cmd == "restore" {
+				// Skip this command, continue to next
+				ro.logger.Debugf("Skip item with command restore: key(%v), args(%v), continue to next item", item.Args, item.Args)
+				continue
 			}
 
 			txnStatus, needFlush = transactionStatus(item.Cmd, txnStatus)
