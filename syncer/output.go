@@ -1408,6 +1408,28 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 			}
 
 			ro.logger.Debugf("Command item.Cmd (%v), item.Args (%v)", item.Cmd, item.Args)
+
+			// Validate HSET command - check all fields and values exist
+			if item.Cmd == "hset" {
+				if err := ro.validateHsetCommand(item); err != nil {
+					ro.logger.Errorf("HSET command validation failed: %v, skipping command", err)
+					ro.filterCounterAdd(1)
+					continue
+				}
+				// Check if HSET command should be skipped (same field-value pairs already exist in target)
+				if ro.cfg.SkipSameValue {
+					skip, err := ro.checkAndSkipSameHsetValue(replayWait.Context(), conn, item, &currentCheckDB)
+					if err != nil {
+						ro.logger.Debugf("check same hset value error : key(%v), err(%v)", item.Args, err)
+						// On error, proceed with HSET
+					} else if skip {
+						// Skip this command, continue to next
+						ro.logger.Debugf("Skip item with command hset on currentCheckDB(%v), continue to next item", currentCheckDB)
+						continue
+					}
+				}
+			}
+
 			// Check if SET command should be skipped (same value already exists in target)
 			if item.Cmd == "set" && ro.cfg.SkipSameValue {
 				skip, err := ro.checkAndSkipSameValue(replayWait.Context(), conn, item, &currentCheckDB)
@@ -1591,6 +1613,145 @@ func (ro *RedisOutput) checkAndSkipSameValue(ctx context.Context, conn client.Re
 	}
 
 	// Values are different, proceed with SET
+	return false, nil
+}
+
+// validateHsetCommand checks that all fields and values exist in the HSET command
+func (ro *RedisOutput) validateHsetCommand(cmd cmdExecution) error {
+	// HSET requires at least 3 args: key, field, value
+	if len(cmd.Args) < 3 {
+		return fmt.Errorf("HSET command requires at least 3 args (key, field, value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
+	}
+
+	// Check that args count is odd (key + pairs of field-value)
+	// HSET key field1 value1 [field2 value2 ...]
+	if (len(cmd.Args)-1)%2 != 0 {
+		return fmt.Errorf("HSET command has invalid number of args (must be key + pairs of field-value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
+	}
+
+	// Check all args are not nil
+	for i, arg := range cmd.Args {
+		if arg == nil {
+			return fmt.Errorf("HSET arg[%d] is nil: offset(%d), db(%d)", i, cmd.Offset, cmd.Db)
+		}
+
+		// Check if arg is []byte
+		argBytes, ok := arg.([]byte)
+		if !ok {
+			return fmt.Errorf("HSET arg[%d] is not []byte, got %T: offset(%d), db(%d)", i, arg, cmd.Offset, cmd.Db)
+		}
+
+		// Check key (first arg) is not empty
+		if i == 0 && len(argBytes) == 0 {
+			return fmt.Errorf("HSET key is empty: offset(%d), db(%d)", cmd.Offset, cmd.Db)
+		}
+
+		// Check field names (odd indices: 1, 3, 5, ...) are not empty
+		if i > 0 && i%2 == 1 && len(argBytes) == 0 {
+			return fmt.Errorf("HSET field[%d] is empty: offset(%d), db(%d)", (i-1)/2, cmd.Offset, cmd.Db)
+		}
+
+		// Values (even indices: 2, 4, 6, ...) can be empty, but we log a warning
+		if i > 0 && i%2 == 0 && len(argBytes) == 0 {
+			ro.logger.Debugf("HSET value[%d] is empty: offset(%d), db(%d)", (i-2)/2, cmd.Offset, cmd.Db)
+		}
+	}
+
+	return nil
+}
+
+// checkAndSkipSameHsetValue checks if an HSET command should be skipped because the target hash already has the same field-value pairs
+func (ro *RedisOutput) checkAndSkipSameHsetValue(ctx context.Context, conn client.Redis, cmd cmdExecution, currentCheckDB *int) (bool, error) {
+	if !ro.cfg.SkipSameValue {
+		return false, nil
+	}
+
+	// Only check HSET commands with at least key, field, value
+	if cmd.Cmd != "hset" || len(cmd.Args) < 3 {
+		return false, nil
+	}
+
+	// Extract key
+	keyBytes, ok := cmd.Args[0].([]byte)
+	if !ok {
+		return false, nil
+	}
+	key := util.BytesToString(keyBytes)
+
+	// Extract field-value pairs
+	fieldValuePairs := make(map[string][]byte)
+	for i := 1; i < len(cmd.Args); i += 2 {
+		if i+1 >= len(cmd.Args) {
+			break
+		}
+		fieldBytes, ok := cmd.Args[i].([]byte)
+		if !ok {
+			return false, nil
+		}
+		valueBytes, ok := cmd.Args[i+1].([]byte)
+		if !ok {
+			return false, nil
+		}
+		field := util.BytesToString(fieldBytes)
+		fieldValuePairs[field] = valueBytes
+	}
+
+	if len(fieldValuePairs) == 0 {
+		return false, nil
+	}
+
+	// Select the correct database (only if different from current)
+	if cmd.Db >= 0 {
+		targetDB, _ := ro.selectDB(-1, cmd.Db)
+		if *currentCheckDB != targetDB {
+			if err := redis.SelectDB(conn, uint32(targetDB)); err != nil {
+				ro.logger.Debugf("select db error for hset skip check : db(%d), err(%v)", targetDB, err)
+				return false, nil // On error, proceed with HSET
+			}
+			*currentCheckDB = targetDB
+		}
+	}
+
+	// Check if hash exists
+	exists, err := common.Int64(conn.Do("exists", key))
+	if err != nil {
+		ro.logger.Debugf("exists check error for hset skip : key(%s), err(%v)", key, err)
+		return false, nil // On error, proceed with HSET
+	}
+
+	if exists == 0 {
+		// Hash doesn't exist, proceed with HSET
+		return false, nil
+	}
+
+	// Hash exists, check all field-value pairs
+	allMatch := true
+	for field, sourceValue := range fieldValuePairs {
+		targetValue, err := common.Bytes(conn.Do("hget", key, field))
+		if err != nil {
+			if errors.Is(err, common.ErrNil) {
+				// Field doesn't exist in target, values don't match
+				allMatch = false
+				break
+			}
+			ro.logger.Debugf("hget value error for hset skip : key(%s), field(%s), err(%v)", key, field, err)
+			return false, nil // On error, proceed with HSET
+		}
+
+		// Compare values
+		if !bytes.Equal(sourceValue, targetValue) {
+			allMatch = false
+			break
+		}
+	}
+
+	if allMatch {
+		ro.logger.Debugf("skip HSET command : key(%s), all field-value pairs already exist and match, fields(%d)", key, len(fieldValuePairs))
+		ro.filterCounterAdd(1)
+		return true, nil // Skip this command
+	}
+
+	// Field-value pairs are different, proceed with HSET
 	return false, nil
 }
 
