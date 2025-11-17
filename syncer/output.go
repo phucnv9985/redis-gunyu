@@ -45,6 +45,8 @@ type RedisOutput struct {
 	sendCounterRt      atomic.Int64
 	rdbFilterCounterRt atomic.Int64
 	rdbSendCounterRt   atomic.Int64
+	activeConnections  atomic.Int64
+	totalConnections   atomic.Int64
 
 	cpGuard         sync.RWMutex
 	checkpointInMem checkpoint.CheckpointInfo
@@ -130,6 +132,18 @@ var (
 		Namespace: config.AppName,
 		Subsystem: "output",
 		Name:      "sync_delay",
+		Labels:    []string{"input"},
+	})
+	connectionCounter = metric.NewCounterVec(metric.CounterVecOpts{
+		Namespace: config.AppName,
+		Subsystem: "output",
+		Name:      "connection_total",
+		Labels:    []string{"input"},
+	})
+	activeConnectionsGauge = metric.NewGaugeVec(metric.GaugeVecOpts{
+		Namespace: config.AppName,
+		Subsystem: "output",
+		Name:      "active_connections",
 		Labels:    []string{"input"},
 	})
 )
@@ -222,7 +236,7 @@ func (ro *RedisOutput) SetRunId(ctx context.Context, id string) error {
 		if err != nil {
 			return err
 		}
-		defer cli.Close()
+		defer ro.CloseRedisConn(cli)
 		err = checkpoint.UpdateCheckpoint(cli, ro.cfg.CheckpointName, []string{id, ro.cfg.RunId})
 		if err != nil {
 			ro.logger.Errorf("update checkpoint error : cp(%s), runId(%s,%s), err(%v)", ro.cfg.CheckpointName, id, ro.cfg.RunId, err)
@@ -323,7 +337,7 @@ func (ro *RedisOutput) rdbReplay(ctx context.Context, pipe <-chan *rdb.BinEntry)
 		ro.logger.Errorf("new redis error : redis(%v), err(%v)", ro.cfg.Redis.Addresses, err)
 		return err
 	}
-	defer cli.Close()
+	defer ro.CloseRedisConn(cli)
 
 	var ticker = time.Now()
 	pingC := 0
@@ -550,7 +564,7 @@ func (ro *RedisOutput) setCheckpoint(ctx context.Context, runId string, offset i
 		if err != nil {
 			return err
 		}
-		defer cli.Close()
+		defer ro.CloseRedisConn(cli)
 		return checkpoint.SetCheckpoint(cli, checkpointKv)
 	}, 5, time.Second*2, 0.3)
 	ro.logger.Log(err, "set checkpoint : checkpoint(%v), err(%v)", checkpointKv, err)
@@ -561,8 +575,38 @@ func (ro *RedisOutput) NewRedisConn(ctx context.Context) (conn client.Redis, err
 	conn, err = client.NewRedis(ro.cfg.Redis)
 	if err != nil {
 		ro.logger.Errorf("new redis error : redis(%v), err(%v)", ro.cfg.Redis.Addresses, err)
+		return nil, err
 	}
-	return conn, err
+
+	// Track connection creation
+	connectionCounter.Inc(ro.cfg.InputName)
+	totalCount := ro.totalConnections.Add(1)
+	activeCount := ro.activeConnections.Add(1)
+	activeConnectionsGauge.Set(float64(activeCount), ro.cfg.InputName)
+	ro.logger.Debugf("new redis connection created : active(%d), total(%d), redis(%v)", activeCount, totalCount, ro.cfg.Redis.Addresses)
+	return conn, nil
+}
+
+// CloseRedisConn tracks connection closure
+func (ro *RedisOutput) CloseRedisConn(conn client.Redis) error {
+	if conn == nil {
+		return nil
+	}
+	err := conn.Close()
+	if err != nil {
+		ro.logger.Debugf("close redis connection error : err(%v)", err)
+	}
+
+	// Track connection closure
+	activeCount := ro.activeConnections.Add(-1)
+	if activeCount < 0 {
+		activeCount = 0
+		ro.activeConnections.Store(0)
+	}
+	activeConnectionsGauge.Set(float64(activeCount), ro.cfg.InputName)
+	ro.logger.Debugf("redis connection closed : active(%d)", activeCount)
+
+	return err
 }
 
 func (ro *RedisOutput) sendAof(ctx context.Context, runId string, reader *bufio.Reader, offset int64, nsize int64) (err error) {
@@ -592,7 +636,7 @@ func (ro *RedisOutput) sendAof(ctx context.Context, runId string, reader *bufio.
 		//err = errors.Join(ErrRestart, err) // check typology
 		return
 	}
-	defer conn.Close()
+	defer ro.CloseRedisConn(conn)
 
 	// send cmds and check result sequentially, maybe client get connection from pool, result in inconsitent of commands
 	// if ro.cfg.CanTransaction {
@@ -799,7 +843,7 @@ func (ro *RedisOutput) checkpoint(ctx context.Context, runIds []string) (cpi *ch
 	if err != nil {
 		return nil, 0, err
 	}
-	defer cli.Close()
+	defer ro.CloseRedisConn(cli)
 	cpKv, _dbid, err := checkpoint.GetCheckpoint(cli, ro.cfg.CheckpointName, runIds)
 	if err != nil {
 		ro.logger.Errorf("get checkpoint error : name(%s), runIds(%v), err(%v)", ro.cfg.CheckpointName, runIds, err)
@@ -899,7 +943,7 @@ func (ro *RedisOutput) sendCmdsInTransaction(replayWait usync.WaitCloser, conn c
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
+	defer ro.CloseRedisConn(conn)
 
 	usync.SafeGo(func() {
 		err := ro.outputReply(replayWait, conn)
@@ -1363,6 +1407,29 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 				continue
 			}
 
+			ro.logger.Debugf("Command item.Cmd (%v), item.Args (%v)", item.Cmd, item.Args)
+
+			// Validate HSET command - check all fields and values exist
+			if item.Cmd == "hset" {
+				if err := ro.validateHsetCommand(item); err != nil {
+					ro.logger.Errorf("HSET command validation failed: %v, skipping command", err)
+					ro.filterCounterAdd(1)
+					continue
+				}
+				// Check if HSET command should be skipped (same field-value pairs already exist in target)
+				if ro.cfg.SkipSameValue {
+					skip, err := ro.checkAndSkipSameHsetValue(replayWait.Context(), conn, item, &currentCheckDB)
+					if err != nil {
+						ro.logger.Debugf("check same hset value error : key(%v), err(%v)", item.Args, err)
+						// On error, proceed with HSET
+					} else if skip {
+						// Skip this command, continue to next
+						ro.logger.Debugf("Skip item with command hset on currentCheckDB(%v), continue to next item", currentCheckDB)
+						continue
+					}
+				}
+			}
+
 			// Check if SET command should be skipped (same value already exists in target)
 			if item.Cmd == "set" && ro.cfg.SkipSameValue {
 				skip, err := ro.checkAndSkipSameValue(replayWait.Context(), conn, item, &currentCheckDB)
@@ -1374,6 +1441,11 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 					ro.logger.Debugf("Skip item with command set on currentCheckDB(%v), continue to next item", currentCheckDB)
 					continue
 				}
+			}
+			if item.Cmd == "restore" {
+				// Skip this command, continue to next
+				ro.logger.Debugf("Skip item with command restore: key(%v), args(%v), continue to next item", item.Args, item.Args)
+				continue
 			}
 
 			txnStatus, needFlush = transactionStatus(item.Cmd, txnStatus)
@@ -1541,6 +1613,160 @@ func (ro *RedisOutput) checkAndSkipSameValue(ctx context.Context, conn client.Re
 	}
 
 	// Values are different, proceed with SET
+	return false, nil
+}
+
+// validateHsetCommand checks that all fields and values exist in the HSET command
+func (ro *RedisOutput) validateHsetCommand(cmd cmdExecution) error {
+	// HSET requires at least 3 args: key, field, value
+	if len(cmd.Args) < 3 {
+		return fmt.Errorf("HSET command requires at least 3 args (key, field, value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
+	}
+
+	// Check that args count is odd (key + pairs of field-value)
+	// HSET key field1 value1 [field2 value2 ...]
+	if (len(cmd.Args)-1)%2 != 0 {
+		return fmt.Errorf("HSET command has invalid number of args (must be key + pairs of field-value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
+	}
+
+	// Check all args are not nil
+	for i, arg := range cmd.Args {
+		if arg == nil {
+			return fmt.Errorf("HSET arg[%d] is nil: offset(%d), db(%d)", i, cmd.Offset, cmd.Db)
+		}
+
+		// Check if arg is []byte
+		argBytes, ok := arg.([]byte)
+		if !ok {
+			return fmt.Errorf("HSET arg[%d] is not []byte, got %T: offset(%d), db(%d)", i, arg, cmd.Offset, cmd.Db)
+		}
+
+		// Check key (first arg) is not empty
+		if i == 0 && len(argBytes) == 0 {
+			return fmt.Errorf("HSET key is empty: offset(%d), db(%d)", cmd.Offset, cmd.Db)
+		}
+
+		// Check field names (odd indices: 1, 3, 5, ...) are not empty
+		if i > 0 && i%2 == 1 && len(argBytes) == 0 {
+			return fmt.Errorf("HSET field[%d] is empty: offset(%d), db(%d)", (i-1)/2, cmd.Offset, cmd.Db)
+		}
+
+		// Values (even indices: 2, 4, 6, ...) can be empty, but we log a warning
+		if i > 0 && i%2 == 0 && len(argBytes) == 0 {
+			ro.logger.Debugf("HSET value[%d] is empty: offset(%d), db(%d)", (i-2)/2, cmd.Offset, cmd.Db)
+		}
+	}
+
+	return nil
+}
+
+// checkAndSkipSameHsetValue checks if an HSET command should be skipped because the target hash already has the same field-value pairs
+func (ro *RedisOutput) checkAndSkipSameHsetValue(ctx context.Context, conn client.Redis, cmd cmdExecution, currentCheckDB *int) (bool, error) {
+	if !ro.cfg.SkipSameValue {
+		return false, nil
+	}
+
+	// Only check HSET commands with at least key, field, value
+	if cmd.Cmd != "hset" || len(cmd.Args) < 3 {
+		return false, nil
+	}
+
+	// Extract key
+	keyBytes, ok := cmd.Args[0].([]byte)
+	if !ok {
+		return false, nil
+	}
+	key := util.BytesToString(keyBytes)
+
+	// Extract field-value pairs
+	fieldValuePairs := make(map[string][]byte)
+	for i := 1; i < len(cmd.Args); i += 2 {
+		if i+1 >= len(cmd.Args) {
+			break
+		}
+		fieldBytes, ok := cmd.Args[i].([]byte)
+		if !ok {
+			return false, nil
+		}
+		valueBytes, ok := cmd.Args[i+1].([]byte)
+		if !ok {
+			return false, nil
+		}
+		field := util.BytesToString(fieldBytes)
+		fieldValuePairs[field] = valueBytes
+	}
+
+	if len(fieldValuePairs) == 0 {
+		return false, nil
+	}
+
+	// Select the correct database (only if different from current)
+	if cmd.Db >= 0 {
+		targetDB, _ := ro.selectDB(-1, cmd.Db)
+		if *currentCheckDB != targetDB {
+			if err := redis.SelectDB(conn, uint32(targetDB)); err != nil {
+				ro.logger.Debugf("select db error for hset skip check : db(%d), err(%v)", targetDB, err)
+				return false, nil // On error, proceed with HSET
+			}
+			*currentCheckDB = targetDB
+		}
+	}
+
+	// Check if hash exists
+	exists, err := common.Int64(conn.Do("exists", key))
+	if err != nil {
+		ro.logger.Debugf("exists check error for hset skip : key(%s), err(%v)", key, err)
+		return false, nil // On error, proceed with HSET
+	}
+
+	if exists == 0 {
+		// Hash doesn't exist, proceed with HSET
+		return false, nil
+	}
+
+	// Hash exists, get all field-value pairs at once using HGETALL
+	// HGETALL returns array of [field1, value1, field2, value2, ...]
+	hgetallResult, err := common.Strings(conn.Do("hgetall", key))
+	if err != nil {
+		ro.logger.Debugf("hgetall error for hset skip : key(%s), err(%v)", key, err)
+		return false, nil // On error, proceed with HSET
+	}
+
+	// Parse HGETALL result into field-value pairs map
+	targetHash := make(map[string][]byte)
+	for i := 0; i < len(hgetallResult); i += 2 {
+		if i+1 >= len(hgetallResult) {
+			break
+		}
+		field := hgetallResult[i]
+		value := []byte(hgetallResult[i+1])
+		targetHash[field] = value
+	}
+
+	// Compare all field-value pairs
+	allMatch := true
+	for field, sourceValue := range fieldValuePairs {
+		targetValue, exists := targetHash[field]
+		if !exists {
+			// Field doesn't exist in target, values don't match
+			allMatch = false
+			break
+		}
+
+		// Compare values
+		if !bytes.Equal(sourceValue, targetValue) {
+			allMatch = false
+			break
+		}
+	}
+
+	if allMatch {
+		ro.logger.Debugf("skip HSET command : key(%s), all field-value pairs already exist and match, fields(%d)", key, len(fieldValuePairs))
+		ro.filterCounterAdd(1)
+		return true, nil // Skip this command
+	}
+
+	// Field-value pairs are different, proceed with HSET
 	return false, nil
 }
 
