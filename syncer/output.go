@@ -1724,18 +1724,33 @@ func (ro *RedisOutput) checkAndSkipSameHsetValue(ctx context.Context, conn clien
 		return false, nil
 	}
 
-	// Hash exists, check all field-value pairs
+	// Hash exists, get all field-value pairs at once using HGETALL
+	// HGETALL returns array of [field1, value1, field2, value2, ...]
+	hgetallResult, err := common.Strings(conn.Do("hgetall", key))
+	if err != nil {
+		ro.logger.Debugf("hgetall error for hset skip : key(%s), err(%v)", key, err)
+		return false, nil // On error, proceed with HSET
+	}
+
+	// Parse HGETALL result into field-value pairs map
+	targetHash := make(map[string][]byte)
+	for i := 0; i < len(hgetallResult); i += 2 {
+		if i+1 >= len(hgetallResult) {
+			break
+		}
+		field := hgetallResult[i]
+		value := []byte(hgetallResult[i+1])
+		targetHash[field] = value
+	}
+
+	// Compare all field-value pairs
 	allMatch := true
 	for field, sourceValue := range fieldValuePairs {
-		targetValue, err := common.Bytes(conn.Do("hget", key, field))
-		if err != nil {
-			if errors.Is(err, common.ErrNil) {
-				// Field doesn't exist in target, values don't match
-				allMatch = false
-				break
-			}
-			ro.logger.Debugf("hget value error for hset skip : key(%s), field(%s), err(%v)", key, field, err)
-			return false, nil // On error, proceed with HSET
+		targetValue, exists := targetHash[field]
+		if !exists {
+			// Field doesn't exist in target, values don't match
+			allMatch = false
+			break
 		}
 
 		// Compare values
