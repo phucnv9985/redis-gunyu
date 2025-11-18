@@ -1442,6 +1442,20 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 					continue
 				}
 			}
+
+			// Check if DEL command should be skipped (no keys exist in target)
+			if item.Cmd == "del" {
+				skip, err := ro.checkAndSkipDelIfNotExists(replayWait.Context(), conn, item, &currentCheckDB)
+				if err != nil {
+					ro.logger.Debugf("check del key existence error : keys(%v), err(%v)", item.Args, err)
+					// On error, proceed with DEL
+				} else if skip {
+					// Skip this command, continue to next
+					ro.logger.Debugf("Skip item with command del on currentCheckDB(%v), no keys exist, continue to next item", currentCheckDB)
+					continue
+				}
+			}
+
 			if item.Cmd == "restore" {
 				// Skip this command, continue to next
 				ro.logger.Debugf("Skip item with command restore: key(%v), args(%v), continue to next item", item.Args, item.Args)
@@ -1767,6 +1781,59 @@ func (ro *RedisOutput) checkAndSkipSameHsetValue(ctx context.Context, conn clien
 	}
 
 	// Field-value pairs are different, proceed with HSET
+	return false, nil
+}
+
+// checkAndSkipDelIfNotExists checks if a DEL command should be skipped because none of the keys exist in the target
+func (ro *RedisOutput) checkAndSkipDelIfNotExists(ctx context.Context, conn client.Redis, cmd cmdExecution, currentCheckDB *int) (bool, error) {
+	// Only check DEL commands with at least one key
+	if cmd.Cmd != "del" || len(cmd.Args) < 1 {
+		return false, nil
+	}
+
+	// Extract all keys
+	keys := make([]interface{}, 0, len(cmd.Args))
+	for _, arg := range cmd.Args {
+		keyBytes, ok := arg.([]byte)
+		if !ok {
+			return false, nil
+		}
+		keys = append(keys, keyBytes)
+	}
+
+	if len(keys) == 0 {
+		return false, nil
+	}
+
+	// Select the correct database (only if different from current)
+	if cmd.Db >= 0 {
+		targetDB, _ := ro.selectDB(-1, cmd.Db)
+		if *currentCheckDB != targetDB {
+			if err := redis.SelectDB(conn, uint32(targetDB)); err != nil {
+				ro.logger.Debugf("select db error for del skip check : db(%d), err(%v)", targetDB, err)
+				return false, nil // On error, proceed with DEL
+			}
+			*currentCheckDB = targetDB
+		}
+	}
+
+	// Check if any keys exist using EXISTS command (supports multiple keys)
+	// EXISTS key1 key2 ... returns the count of existing keys
+	existsCount, err := common.Int64(conn.Do("exists", keys...))
+	if err != nil {
+		ro.logger.Debugf("exists check error for del skip : keys(%v), err(%v)", keys, err)
+		return false, nil // On error, proceed with DEL
+	}
+
+	if existsCount == 0 {
+		// No keys exist, skip DEL command
+		ro.logger.Debugf("skip DEL command : no keys exist (%d keys checked), keys(%v)", len(keys), keys)
+		ro.filterCounterAdd(1)
+		return true, nil // Skip this command
+	}
+
+	// At least one key exists, proceed with DEL
+	ro.logger.Debugf("proceed with DEL command : %d out of %d keys exist", existsCount, len(keys))
 	return false, nil
 }
 
