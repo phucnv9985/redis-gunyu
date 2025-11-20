@@ -1409,22 +1409,22 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 
 			ro.logger.Debugf("Command item.Cmd (%v), item.Args (%v)", item.Cmd, item.Args)
 
-			// Validate HSET command - check all fields and values exist
-			if item.Cmd == "hset" {
+			// Validate HSET/HMSET command - check all fields and values exist
+			if item.Cmd == "hset" || item.Cmd == "hmset" {
 				if err := ro.validateHsetCommand(item); err != nil {
-					ro.logger.Errorf("HSET command validation failed: %v, skipping command", err)
+					ro.logger.Errorf("HSET/HMSET command validation failed: %v, skipping command", err)
 					ro.filterCounterAdd(1)
 					continue
 				}
-				// Check if HSET command should be skipped (same field-value pairs already exist in target)
+				// Check if HSET/HMSET command should be skipped (same field-value pairs already exist in target)
 				if ro.cfg.SkipSameValue {
 					skip, err := ro.checkAndSkipSameHsetValue(replayWait.Context(), conn, item, &currentCheckDB)
 					if err != nil {
-						ro.logger.Debugf("check same hset value error : key(%v), err(%v)", item.Args, err)
-						// On error, proceed with HSET
+						ro.logger.Debugf("check same hset/hmset value error : key(%v), err(%v)", item.Args, err)
+						// On error, proceed with HSET/HMSET
 					} else if skip {
 						// Skip this command, continue to next
-						ro.logger.Debugf("Skip item with command hset on currentCheckDB(%v), continue to next item", currentCheckDB)
+						ro.logger.Debugf("Skip item with command %s on currentCheckDB(%v), continue to next item", item.Cmd, currentCheckDB)
 						continue
 					}
 				}
@@ -1630,58 +1630,58 @@ func (ro *RedisOutput) checkAndSkipSameValue(ctx context.Context, conn client.Re
 	return false, nil
 }
 
-// validateHsetCommand checks that all fields and values exist in the HSET command
+// validateHsetCommand checks that all fields and values exist in the HSET/HMSET command
 func (ro *RedisOutput) validateHsetCommand(cmd cmdExecution) error {
-	// HSET requires at least 3 args: key, field, value
+	// HSET/HMSET requires at least 3 args: key, field, value
 	if len(cmd.Args) < 3 {
-		return fmt.Errorf("HSET command requires at least 3 args (key, field, value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
+		return fmt.Errorf("HSET/HMSET command requires at least 3 args (key, field, value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
 	}
 
 	// Check that args count is odd (key + pairs of field-value)
-	// HSET key field1 value1 [field2 value2 ...]
+	// HSET/HMSET key field1 value1 [field2 value2 ...]
 	if (len(cmd.Args)-1)%2 != 0 {
-		return fmt.Errorf("HSET command has invalid number of args (must be key + pairs of field-value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
+		return fmt.Errorf("HSET/HMSET command has invalid number of args (must be key + pairs of field-value), got %d: offset(%d), db(%d)", len(cmd.Args), cmd.Offset, cmd.Db)
 	}
 
 	// Check all args are not nil
 	for i, arg := range cmd.Args {
 		if arg == nil {
-			return fmt.Errorf("HSET arg[%d] is nil: offset(%d), db(%d)", i, cmd.Offset, cmd.Db)
+			return fmt.Errorf("HSET/HMSET arg[%d] is nil: offset(%d), db(%d)", i, cmd.Offset, cmd.Db)
 		}
 
 		// Check if arg is []byte
 		argBytes, ok := arg.([]byte)
 		if !ok {
-			return fmt.Errorf("HSET arg[%d] is not []byte, got %T: offset(%d), db(%d)", i, arg, cmd.Offset, cmd.Db)
+			return fmt.Errorf("HSET/HMSET arg[%d] is not []byte, got %T: offset(%d), db(%d)", i, arg, cmd.Offset, cmd.Db)
 		}
 
 		// Check key (first arg) is not empty
 		if i == 0 && len(argBytes) == 0 {
-			return fmt.Errorf("HSET key is empty: offset(%d), db(%d)", cmd.Offset, cmd.Db)
+			return fmt.Errorf("HSET/HMSET key is empty: offset(%d), db(%d)", cmd.Offset, cmd.Db)
 		}
 
 		// Check field names (odd indices: 1, 3, 5, ...) are not empty
 		if i > 0 && i%2 == 1 && len(argBytes) == 0 {
-			return fmt.Errorf("HSET field[%d] is empty: offset(%d), db(%d)", (i-1)/2, cmd.Offset, cmd.Db)
+			return fmt.Errorf("HSET/HMSET field[%d] is empty: offset(%d), db(%d)", (i-1)/2, cmd.Offset, cmd.Db)
 		}
 
 		// Values (even indices: 2, 4, 6, ...) can be empty, but we log a warning
 		if i > 0 && i%2 == 0 && len(argBytes) == 0 {
-			ro.logger.Debugf("HSET value[%d] is empty: offset(%d), db(%d)", (i-2)/2, cmd.Offset, cmd.Db)
+			ro.logger.Debugf("HSET/HMSET value[%d] is empty: offset(%d), db(%d)", (i-2)/2, cmd.Offset, cmd.Db)
 		}
 	}
 
 	return nil
 }
 
-// checkAndSkipSameHsetValue checks if an HSET command should be skipped because the target hash already has the same field-value pairs
+// checkAndSkipSameHsetValue checks if an HSET/HMSET command should be skipped because the target hash already has the same field-value pairs
 func (ro *RedisOutput) checkAndSkipSameHsetValue(ctx context.Context, conn client.Redis, cmd cmdExecution, currentCheckDB *int) (bool, error) {
 	if !ro.cfg.SkipSameValue {
 		return false, nil
 	}
 
-	// Only check HSET commands with at least key, field, value
-	if cmd.Cmd != "hset" || len(cmd.Args) < 3 {
+	// Only check HSET/HMSET commands with at least key, field, value
+	if (cmd.Cmd != "hset" && cmd.Cmd != "hmset") || len(cmd.Args) < 3 {
 		return false, nil
 	}
 
@@ -1775,12 +1775,12 @@ func (ro *RedisOutput) checkAndSkipSameHsetValue(ctx context.Context, conn clien
 	}
 
 	if allMatch {
-		ro.logger.Debugf("skip HSET command : key(%s), all field-value pairs already exist and match, fields(%d)", key, len(fieldValuePairs))
+		ro.logger.Debugf("skip HSET/HMSET command : key(%s), all field-value pairs already exist and match, fields(%d)", key, len(fieldValuePairs))
 		ro.filterCounterAdd(1)
 		return true, nil // Skip this command
 	}
 
-	// Field-value pairs are different, proceed with HSET
+	// Field-value pairs are different, proceed with HSET/HMSET
 	return false, nil
 }
 
