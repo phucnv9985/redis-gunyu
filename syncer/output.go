@@ -1456,6 +1456,19 @@ func (ro *RedisOutput) sendCmdsBatch(replayWait usync.WaitCloser, conn client.Re
 				}
 			}
 
+			// Check if PEXPIREAT command should be skipped (same expiration time already exists in target)
+			if item.Cmd == "pexpireat" {
+				skip, err := ro.checkAndSkipPexpireatIfSame(replayWait.Context(), conn, item, &currentCheckDB)
+				if err != nil {
+					ro.logger.Debugf("check pexpireat expiration time error : key(%v), err(%v)", item.Args, err)
+					// On error, proceed with PEXPIREAT
+				} else if skip {
+					// Skip this command, continue to next
+					ro.logger.Debugf("Skip item with command pexpireat on currentCheckDB(%v), same expiration time, continue to next item", currentCheckDB)
+					continue
+				}
+			}
+
 			if item.Cmd == "restore" {
 				// Skip this command, continue to next
 				ro.logger.Debugf("Skip item with command restore: key(%v), args(%v), continue to next item", item.Args, item.Args)
@@ -1834,6 +1847,73 @@ func (ro *RedisOutput) checkAndSkipDelIfNotExists(ctx context.Context, conn clie
 
 	// At least one key exists, proceed with DEL
 	ro.logger.Debugf("proceed with DEL command : %d out of %d keys exist", existsCount, len(keys))
+	return false, nil
+}
+
+// checkAndSkipPexpireatIfSame checks if a PEXPIREAT command should be skipped because the target key already has the same expiration time
+func (ro *RedisOutput) checkAndSkipPexpireatIfSame(ctx context.Context, conn client.Redis, cmd cmdExecution, currentCheckDB *int) (bool, error) {
+	// Only check PEXPIREAT commands with key and expiration timestamp
+	if cmd.Cmd != "pexpireat" || len(cmd.Args) < 2 {
+		return false, nil
+	}
+
+	// Extract key
+	keyBytes, ok := cmd.Args[0].([]byte)
+	if !ok {
+		return false, nil
+	}
+	key := util.BytesToString(keyBytes)
+
+	// Extract incoming expiration timestamp (in milliseconds)
+	expireAtBytes, ok := cmd.Args[1].([]byte)
+	if !ok {
+		return false, nil
+	}
+	incomingExpireAt, err := strconv.ParseInt(util.BytesToString(expireAtBytes), 10, 64)
+	if err != nil {
+		ro.logger.Debugf("invalid expiration timestamp for pexpireat skip check : key(%s), timestamp(%v), err(%v)", key, expireAtBytes, err)
+		return false, nil // On error, proceed with PEXPIREAT
+	}
+
+	// Select the correct database (only if different from current)
+	if cmd.Db >= 0 {
+		targetDB, _ := ro.selectDB(-1, cmd.Db)
+		if *currentCheckDB != targetDB {
+			if err := redis.SelectDB(conn, uint32(targetDB)); err != nil {
+				ro.logger.Debugf("select db error for pexpireat skip check : db(%d), err(%v)", targetDB, err)
+				return false, nil // On error, proceed with PEXPIREAT
+			}
+			*currentCheckDB = targetDB
+		}
+	}
+
+	// Get current expiration time using PEXPIRETIME command
+	// PEXPIRETIME returns:
+	// - Positive integer: expiration timestamp in milliseconds
+	// - -1: key exists but has no expiration time
+	// - -2: key does not exist
+	currentExpireAt, err := common.Int64(conn.Do("pexpiretime", key))
+	if err != nil {
+		ro.logger.Debugf("pexpiretime check error for skip : key(%s), err(%v)", key, err)
+		return false, nil // On error, proceed with PEXPIREAT
+	}
+
+	// If key doesn't exist (-2) or has no expiration (-1), proceed with PEXPIREAT
+	if currentExpireAt == -2 || currentExpireAt == -1 {
+		ro.logger.Debugf("proceed with PEXPIREAT command : key(%s), key doesn't exist or has no expiration, currentExpireAt(%d), incomingExpireAt(%d)", key, currentExpireAt, incomingExpireAt)
+		return false, nil
+	}
+
+	// Compare expiration times
+	if currentExpireAt == incomingExpireAt {
+		// Same expiration time, skip PEXPIREAT command
+		ro.logger.Debugf("skip PEXPIREAT command : key(%s), expiration time already matches, expireAt(%d)", key, incomingExpireAt)
+		ro.filterCounterAdd(1)
+		return true, nil // Skip this command
+	}
+
+	// Different expiration time, proceed with PEXPIREAT
+	ro.logger.Debugf("proceed with PEXPIREAT command : key(%s), expiration times differ, currentExpireAt(%d), incomingExpireAt(%d)", key, currentExpireAt, incomingExpireAt)
 	return false, nil
 }
 
