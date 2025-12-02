@@ -1,0 +1,3169 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "WebApi$1.0",
+    "version": "1.0"
+  },
+  "host": "mysource-gcdxbbb8akfge3du.northeurope-01.azurewebsites.net",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/auth/v1/token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticate user with email and password",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Login credentials",
+            "schema": {
+              "$ref": "#/definitions/LoginCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/v1/google-login": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Redirect to Google for authentication",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/v1/signin-google": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticate user with google account",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/categories": {
+      "post": {
+        "tags": [
+          "Category"
+        ],
+        "summary": "Create a new category",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateCategoryCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of categories.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/conversation": {
+      "post": {
+        "tags": [
+          "Conversation"
+        ],
+        "summary": "Create a new conversation",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateConversationCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/escrow": {
+      "post": {
+        "tags": [
+          "Escrow"
+        ],
+        "summary": "Create a new escrow",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateEscrowCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/escrowfile": {
+      "post": {
+        "tags": [
+          "EscrowFile"
+        ],
+        "summary": "Create a new escrow file",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateEscrowFileCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/files/{fileId}": {
+      "get": {
+        "tags": [
+          "File"
+        ],
+        "summary": "Retrieves a single file.",
+        "produces": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "application/octet-stream; ver=1.0",
+          "text/json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fileId",
+            "description": "",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/rest/v1/files": {
+      "post": {
+        "tags": [
+          "File"
+        ],
+        "summary": "Create a new file",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "FileGroupId",
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "query",
+            "name": "FileName",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "FileSize",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "query",
+            "name": "FileType",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "FileToUpload",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of files.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/file_groups": {
+      "post": {
+        "tags": [
+          "FileGroup"
+        ],
+        "summary": "Create a new file group",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateFileGroupCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of file groups.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/messages": {
+      "post": {
+        "tags": [
+          "Message"
+        ],
+        "summary": "Create a new message",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateMessageCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of messages.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/odata/$metadata": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "operationId": "odata/$metadata",
+        "produces": [
+          "application/json;odata.metadata=minimal;odata.streaming=true",
+          "application/json;odata.metadata=minimal;odata.streaming=false",
+          "application/json;odata.metadata=minimal",
+          "application/json;odata.metadata=full;odata.streaming=true",
+          "application/json;odata.metadata=full;odata.streaming=false",
+          "application/json;odata.metadata=full",
+          "application/json;odata.metadata=none;odata.streaming=true",
+          "application/json;odata.metadata=none;odata.streaming=false",
+          "application/json;odata.metadata=none",
+          "application/json;odata.streaming=true",
+          "application/json;odata.streaming=false",
+          "application/json",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;odata.metadata=full;IEEE754Compatible=false",
+          "application/json;odata.metadata=full;IEEE754Compatible=true",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.metadata=none;IEEE754Compatible=false",
+          "application/json;odata.metadata=none;IEEE754Compatible=true",
+          "application/json;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;IEEE754Compatible=false",
+          "application/json;IEEE754Compatible=true",
+          "application/xml",
+          "text/plain",
+          "application/octet-stream",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/IEdmModel"
+            }
+          }
+        }
+      }
+    },
+    "/odata": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "operationId": "odata/",
+        "produces": [
+          "application/json;odata.metadata=minimal;odata.streaming=true",
+          "application/json;odata.metadata=minimal;odata.streaming=false",
+          "application/json;odata.metadata=minimal",
+          "application/json;odata.metadata=full;odata.streaming=true",
+          "application/json;odata.metadata=full;odata.streaming=false",
+          "application/json;odata.metadata=full",
+          "application/json;odata.metadata=none;odata.streaming=true",
+          "application/json;odata.metadata=none;odata.streaming=false",
+          "application/json;odata.metadata=none",
+          "application/json;odata.streaming=true",
+          "application/json;odata.streaming=false",
+          "application/json",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;odata.metadata=full;IEEE754Compatible=false",
+          "application/json;odata.metadata=full;IEEE754Compatible=true",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.metadata=none;IEEE754Compatible=false",
+          "application/json;odata.metadata=none;IEEE754Compatible=true",
+          "application/json;odata.streaming=true;IEEE754Compatible=false",
+          "application/json;odata.streaming=true;IEEE754Compatible=true",
+          "application/json;odata.streaming=false;IEEE754Compatible=false",
+          "application/json;odata.streaming=false;IEEE754Compatible=true",
+          "application/json;IEEE754Compatible=false",
+          "application/json;IEEE754Compatible=true",
+          "application/xml",
+          "text/plain",
+          "application/octet-stream",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ODataServiceDocument"
+            }
+          }
+        }
+      }
+    },
+    "/rest/v1/notifications": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Create a new notification",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateNotificationCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of notifications.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/profiles": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of profiles.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Create a new profile",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateProfileCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/requests": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of requests.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Request"
+        ],
+        "summary": "Create a new request",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateRequestCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/request_responses": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of request responses.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "RequestResponse"
+        ],
+        "summary": "Create a new request response",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateRequestResponseCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/user_locations": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of user locations with coordinates.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserLocation"
+        ],
+        "summary": "Create a new userLocation",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateUserLocationCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/conversations": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of conversations.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/research_databases": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of research databases.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/resource_declarations": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of resource declarations.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ResourceDeclarations"
+        ],
+        "summary": "Create a new resource",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateResourceDeclarationCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/escrows": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of escrows.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/escrowfiles": {
+      "get": {
+        "tags": [
+          "OData"
+        ],
+        "summary": "Retrieves the list of escrow files.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/research_database": {
+      "post": {
+        "tags": [
+          "ResearchDatabase"
+        ],
+        "summary": "Create a new research database",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateResearchDatabaseCommand"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/users": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Create a new user",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateUserDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/users/{id}": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Update an existing user",
+        "consumes": [
+          "application/json;odata.metadata=minimal;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=minimal; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=full; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false; ver=1.0",
+          "application/json;odata.metadata=none; ver=1.0",
+          "application/json;odata.streaming=true; ver=1.0",
+          "application/json;odata.streaming=false; ver=1.0",
+          "application/json; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=minimal;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=full;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.metadata=none;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.metadata=none;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=true;IEEE754Compatible=true; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=false; ver=1.0",
+          "application/json;odata.streaming=false;IEEE754Compatible=true; ver=1.0",
+          "application/json;IEEE754Compatible=false; ver=1.0",
+          "application/json;IEEE754Compatible=true; ver=1.0",
+          "application/xml; ver=1.0",
+          "text/plain; ver=1.0",
+          "text/json; ver=1.0",
+          "application/*+json; ver=1.0"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/rest/v1/version": {
+      "get": {
+        "tags": [
+          "Version"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "X-Version",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Coordinate": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "format": "double",
+          "type": "number"
+        },
+        "y": {
+          "format": "double",
+          "type": "number"
+        },
+        "z": {
+          "format": "double",
+          "type": "number"
+        },
+        "m": {
+          "format": "double",
+          "type": "number"
+        },
+        "coordinate_value": {
+          "$ref": "#/definitions/Coordinate"
+        },
+        "is_valid": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "CoordinateEqualityComparer": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "CoordinateSequence": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "measures": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "spatial": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "ordinates": {
+          "$ref": "#/definitions/Ordinates"
+        },
+        "has_z": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "has_m": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "z_ordinate_index": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "m_ordinate_index": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "first": {
+          "$ref": "#/definitions/Coordinate"
+        },
+        "last": {
+          "$ref": "#/definitions/Coordinate"
+        },
+        "count": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "CoordinateSequenceFactory": {
+      "type": "object",
+      "properties": {
+        "ordinates": {
+          "$ref": "#/definitions/Ordinates"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateCategoryCommand": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateConversationCommand": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "response_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requester_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "responder_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "last_message_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateEscrowCommand": {
+      "type": "object",
+      "properties": {
+        "conversation_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "request_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "response_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "requester_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "responder_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "amount": {
+          "format": "double",
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateEscrowFileCommand": {
+      "type": "object",
+      "properties": {
+        "escrow_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "file_name": {
+          "type": "string"
+        },
+        "file_size": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "file_type": {
+          "type": "string"
+        },
+        "uploaded_by": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "storage_path": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateFileGroupCommand": {
+      "type": "object",
+      "properties": {
+        "conversation_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "uploader_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateMessageCommand": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "conversation_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "message_type": {
+          "type": "string"
+        },
+        "sender_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateNotificationCommand": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateProfileCommand": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "avatar_url": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "institution": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "longitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "user_type": {
+          "type": "string"
+        },
+        "rating": {
+          "format": "double",
+          "type": "number"
+        },
+        "notification_preferences": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateRequestCommand": {
+      "type": "object",
+      "properties": {
+        "requester_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "resource_type": {
+          "type": "string"
+        },
+        "resource_name": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "pages_needed": {
+          "type": "string"
+        },
+        "category_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "urgency_level": {
+          "type": "string"
+        },
+        "price_offered": {
+          "format": "double",
+          "type": "number"
+        },
+        "location": {
+          "type": "string"
+        },
+        "longitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "status": {
+          "type": "string"
+        },
+        "deadline": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateRequestResponseCommand": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "provider_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "proposed_price": {
+          "format": "double",
+          "type": "number"
+        },
+        "estimated_delivery_time": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateResearchDatabaseCommand": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website_url": {
+          "type": "string"
+        },
+        "access_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateResourceDeclarationCommand": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "resource_type": {
+          "type": "string"
+        },
+        "resource_name": {
+          "type": "string"
+        },
+        "database_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "institution_name": {
+          "type": "string"
+        },
+        "access_details": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateUserDto": {
+      "required": [
+        "email",
+        "full_name",
+        "password"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "format": "email",
+          "minLength": 1,
+          "type": "string"
+        },
+        "full_name": {
+          "minLength": 2,
+          "type": "string"
+        },
+        "password": {
+          "minLength": 6,
+          "type": "string"
+        },
+        "user_role": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CreateUserLocationCommand": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "coordinates": {
+          "$ref": "#/definitions/Point"
+        },
+        "address": {
+          "type": "string"
+        },
+        "is_current": {
+          "type": "boolean"
+        },
+        "longitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Dimension": {
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        -3,
+        -2,
+        -1
+      ],
+      "type": "integer"
+    },
+    "EdmContainerElementKind": {
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "type": "integer"
+    },
+    "EdmExpressionKind": {
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "type": "integer"
+    },
+    "EdmSchemaElementKind": {
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "type": "integer"
+    },
+    "EdmTypeKind": {
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "type": "integer"
+    },
+    "Envelope": {
+      "type": "object",
+      "properties": {
+        "is_null": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "width": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "height": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "diameter": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "min_x": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "max_x": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "min_y": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "max_y": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "area": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "min_extent": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "max_extent": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "centre": {
+          "$ref": "#/definitions/Coordinate"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Geometry": {
+      "type": "object",
+      "properties": {
+        "factory": {
+          "$ref": "#/definitions/GeometryFactory"
+        },
+        "user_data": {},
+        "srid": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "geometry_type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ogc_geometry_type": {
+          "$ref": "#/definitions/OgcGeometryType"
+        },
+        "precision_model": {
+          "$ref": "#/definitions/PrecisionModel"
+        },
+        "coordinate": {
+          "$ref": "#/definitions/Coordinate"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Coordinate"
+          },
+          "readOnly": true
+        },
+        "num_points": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "num_geometries": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "is_simple": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "is_valid": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "is_empty": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "area": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "length": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "centroid": {
+          "$ref": "#/definitions/Point"
+        },
+        "interior_point": {
+          "$ref": "#/definitions/Point"
+        },
+        "point_on_surface": {
+          "$ref": "#/definitions/Point"
+        },
+        "dimension": {
+          "$ref": "#/definitions/Dimension"
+        },
+        "boundary": {
+          "$ref": "#/definitions/Geometry"
+        },
+        "boundary_dimension": {
+          "$ref": "#/definitions/Dimension"
+        },
+        "envelope": {
+          "$ref": "#/definitions/Geometry"
+        },
+        "envelope_internal": {
+          "$ref": "#/definitions/Envelope"
+        },
+        "is_rectangle": {
+          "type": "boolean",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "GeometryFactory": {
+      "type": "object",
+      "properties": {
+        "precision_model": {
+          "$ref": "#/definitions/PrecisionModel"
+        },
+        "coordinate_sequence_factory": {
+          "$ref": "#/definitions/CoordinateSequenceFactory"
+        },
+        "srid": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "geometry_services": {
+          "$ref": "#/definitions/NtsGeometryServices"
+        }
+      },
+      "additionalProperties": false
+    },
+    "GeometryOverlay": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "IEdmDirectValueAnnotationsManager": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "IEdmEntityContainer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "schema_element_kind": {
+          "$ref": "#/definitions/EdmSchemaElementKind"
+        },
+        "namespace": {
+          "type": "string",
+          "readOnly": true
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IEdmEntityContainerElement"
+          },
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmEntityContainerElement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "container_element_kind": {
+          "$ref": "#/definitions/EdmContainerElementKind"
+        },
+        "container": {
+          "$ref": "#/definitions/IEdmEntityContainer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmExpression": {
+      "type": "object",
+      "properties": {
+        "expression_kind": {
+          "$ref": "#/definitions/EdmExpressionKind"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmModel": {
+      "type": "object",
+      "properties": {
+        "schema_elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IEdmSchemaElement"
+          },
+          "readOnly": true
+        },
+        "vocabulary_annotations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IEdmVocabularyAnnotation"
+          },
+          "readOnly": true
+        },
+        "referenced_models": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IEdmModel"
+          },
+          "readOnly": true
+        },
+        "declared_namespaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true
+        },
+        "direct_value_annotations_manager": {
+          "$ref": "#/definitions/IEdmDirectValueAnnotationsManager"
+        },
+        "entity_container": {
+          "$ref": "#/definitions/IEdmEntityContainer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmSchemaElement": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "schema_element_kind": {
+          "$ref": "#/definitions/EdmSchemaElementKind"
+        },
+        "namespace": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmTerm": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "schema_element_kind": {
+          "$ref": "#/definitions/EdmSchemaElementKind"
+        },
+        "namespace": {
+          "type": "string",
+          "readOnly": true
+        },
+        "type": {
+          "$ref": "#/definitions/IEdmTypeReference"
+        },
+        "applies_to": {
+          "type": "string",
+          "readOnly": true
+        },
+        "default_value": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmType": {
+      "type": "object",
+      "properties": {
+        "type_kind": {
+          "$ref": "#/definitions/EdmTypeKind"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmTypeReference": {
+      "type": "object",
+      "properties": {
+        "is_nullable": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "definition": {
+          "$ref": "#/definitions/IEdmType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IEdmVocabularyAnnotatable": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "IEdmVocabularyAnnotation": {
+      "type": "object",
+      "properties": {
+        "qualifier": {
+          "type": "string",
+          "readOnly": true
+        },
+        "term": {
+          "$ref": "#/definitions/IEdmTerm"
+        },
+        "target": {
+          "$ref": "#/definitions/IEdmVocabularyAnnotatable"
+        },
+        "value": {
+          "$ref": "#/definitions/IEdmExpression"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LoginCommand": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "NtsGeometryServices": {
+      "type": "object",
+      "properties": {
+        "geometry_overlay": {
+          "$ref": "#/definitions/GeometryOverlay"
+        },
+        "coordinate_equality_comparer": {
+          "$ref": "#/definitions/CoordinateEqualityComparer"
+        },
+        "default_srid": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "default_coordinate_sequence_factory": {
+          "$ref": "#/definitions/CoordinateSequenceFactory"
+        },
+        "default_precision_model": {
+          "$ref": "#/definitions/PrecisionModel"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ODataEntitySetInfo": {
+      "type": "object",
+      "properties": {
+        "type_annotation": {
+          "$ref": "#/definitions/ODataTypeAnnotation"
+        },
+        "url": {
+          "format": "uri",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ODataFunctionImportInfo": {
+      "type": "object",
+      "properties": {
+        "type_annotation": {
+          "$ref": "#/definitions/ODataTypeAnnotation"
+        },
+        "url": {
+          "format": "uri",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ODataServiceDocument": {
+      "type": "object",
+      "properties": {
+        "type_annotation": {
+          "$ref": "#/definitions/ODataTypeAnnotation"
+        },
+        "entity_sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ODataEntitySetInfo"
+          }
+        },
+        "singletons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ODataSingletonInfo"
+          }
+        },
+        "function_imports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ODataFunctionImportInfo"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ODataSingletonInfo": {
+      "type": "object",
+      "properties": {
+        "type_annotation": {
+          "$ref": "#/definitions/ODataTypeAnnotation"
+        },
+        "url": {
+          "format": "uri",
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ODataTypeAnnotation": {
+      "type": "object",
+      "properties": {
+        "type_name": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "OgcGeometryType": {
+      "format": "int32",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "type": "integer"
+    },
+    "Ordinates": {
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        7,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768,
+        65535,
+        65536,
+        65539,
+        65543,
+        131072,
+        262144,
+        524288,
+        1048576,
+        2097152,
+        4194304,
+        8388608,
+        16777216,
+        33554432,
+        67108864,
+        134217728,
+        268435456,
+        536870912,
+        1073741824,
+        -2147483648,
+        -65536,
+        -1
+      ],
+      "type": "integer"
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "factory": {
+          "$ref": "#/definitions/GeometryFactory"
+        },
+        "user_data": {},
+        "srid": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "precision_model": {
+          "$ref": "#/definitions/PrecisionModel"
+        },
+        "num_geometries": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "is_simple": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "is_valid": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "area": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "length": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "centroid": {
+          "$ref": "#/definitions/Point"
+        },
+        "interior_point": {
+          "$ref": "#/definitions/Point"
+        },
+        "point_on_surface": {
+          "$ref": "#/definitions/Point"
+        },
+        "envelope": {
+          "$ref": "#/definitions/Geometry"
+        },
+        "envelope_internal": {
+          "$ref": "#/definitions/Envelope"
+        },
+        "is_rectangle": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "coordinate_sequence": {
+          "$ref": "#/definitions/CoordinateSequence"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Coordinate"
+          },
+          "readOnly": true
+        },
+        "num_points": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "is_empty": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "dimension": {
+          "$ref": "#/definitions/Dimension"
+        },
+        "boundary_dimension": {
+          "$ref": "#/definitions/Dimension"
+        },
+        "x": {
+          "format": "double",
+          "type": "number"
+        },
+        "y": {
+          "format": "double",
+          "type": "number"
+        },
+        "coordinate": {
+          "$ref": "#/definitions/Coordinate"
+        },
+        "geometry_type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "ogc_geometry_type": {
+          "$ref": "#/definitions/OgcGeometryType"
+        },
+        "boundary": {
+          "$ref": "#/definitions/Geometry"
+        },
+        "z": {
+          "format": "double",
+          "type": "number"
+        },
+        "m": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PrecisionModel": {
+      "type": "object",
+      "properties": {
+        "is_floating": {
+          "type": "boolean",
+          "readOnly": true
+        },
+        "maximum_significant_digits": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        },
+        "scale": {
+          "format": "double",
+          "type": "number"
+        },
+        "grid_size": {
+          "format": "double",
+          "type": "number",
+          "readOnly": true
+        },
+        "precision_model_type": {
+          "$ref": "#/definitions/PrecisionModels"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PrecisionModels": {
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2
+      ],
+      "type": "integer"
+    },
+    "UpdateUserDto": {
+      "required": [
+        "full_name"
+      ],
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "minLength": 2,
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "user_role": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\""
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}
